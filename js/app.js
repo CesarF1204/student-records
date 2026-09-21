@@ -183,7 +183,7 @@ const renderStats = () => {
 
     statShown.textContent = shown;
     statAvg.textContent = classAvg.toFixed(2) + "%";
-    statPassing.textContent = passing;
+    statPassing.textContent = `${passing} of ${total}`;
 
     trendShown.innerHTML = `<span class="text-muted">${shown} of ${total} total</span>`;
 };
@@ -273,8 +273,8 @@ const scoresTemplate = (r) =>
 
 const rowTemplate = (r) => `
     <tr>
-        <td class="sr-id-cell">${r.id}</td>
-        <td>
+        <td class="sr-id-cell" data-label="ID">#${r.id}</td>
+        <td data-label="Student">
             <div class="student-cell">
                 <span class="avatar avatar-md">${escapeHtml(initials(r.name))}</span>
                 <div class="student-meta">
@@ -283,27 +283,27 @@ const rowTemplate = (r) => `
                 </div>
             </div>
         </td>
-        <td><span class="badge badge-soft badge-soft-primary">${escapeHtml(r.section)}</span></td>
-        <td>
+        <td data-label="Section"><span class="badge badge-soft badge-soft-primary">${escapeHtml(r.section)}</span></td>
+        <td data-label="Scores / Avg">
             <div class="avg-cell ${avgClass(r.average)}" title="${r.isPassed ? "Passing" : "Needs improvement"}">
                 <div class="score-list" aria-label="Scores for ${escapeHtml(r.name)}">${scoresTemplate(r)}</div>
                 <strong>${r.average.toFixed(2)}%</strong>
             </div>
         </td>
-        <td>
+        <td data-label="Remarks">
             <span class="badge badge-soft ${r.isPassed ? "badge-soft-success" : "badge-soft-warning"}">
                 ${r.isPassed ? "Passed" : "Needs Improvement"}
             </span>
         </td>
-        <td>
+        <td data-label="Enrolled">
             <span class="text-nowrap">${formatDate(r.enrolled)}</span>
         </td>
-        <td>
+        <td data-label="Status">
             <span class="badge badge-soft ${r.active ? "badge-soft-success" : "badge-soft-muted"}">
                 ${r.active ? "Active" : "Inactive"}
             </span>
         </td>
-        <td class="text-end">
+        <td class="text-end sr-actions-cell" data-label="">
             <div class="dropdown action-drop">
                 <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
                     aria-expanded="false" aria-label="Actions for ${escapeHtml(r.name)}">

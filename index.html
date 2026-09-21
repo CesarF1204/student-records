@@ -46,7 +46,7 @@
                         <div class="dropdown">
                             <button class="btn btn-light btn-sm sr-user-btn d-flex align-items-center" type="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="avatar avatar-sm me-2">RS</span>
+                                <span class="avatar avatar-sm me-2">A</span>
                                 <span class="d-none d-md-inline">Admin</span>
                                 <i class="bi bi-chevron-down ms-2 small" aria-hidden="true"></i>
                             </button>
@@ -80,7 +80,7 @@
 
             <!-- Stat cards -->
             <section class="row g-3 mt-2" aria-label="Key statistics">
-                <div class="col-6 col-md-4">
+                <div class="col-12 col-sm-4">
                     <div class="card sr-stat" aria-live="polite">
                         <div class="stat-icon stat-icon-primary"><i class="bi bi-people-fill" aria-hidden="true"></i></div>
                         <div class="stat-body">
@@ -90,24 +90,24 @@
                         <div class="stat-trend text-muted" id="trendShown">matching current view</div>
                     </div>
                 </div>
-                <div class="col-6 col-md-4">
+                <div class="col-12 col-sm-4">
                     <div class="card sr-stat">
                         <div class="stat-icon stat-icon-accent"><i class="bi bi-mortarboard" aria-hidden="true"></i></div>
                         <div class="stat-body">
                             <div class="stat-value" id="statAvg">&ndash;</div>
                             <div class="stat-label">Class average</div>
                         </div>
-                        <div class="stat-trend text-muted">across all records</div>
+                        <div class="stat-trend text-muted">percentage across all records</div>
                     </div>
                 </div>
-                <div class="col-6 col-md-4">
+                <div class="col-12 col-sm-4">
                     <div class="card sr-stat">
                         <div class="stat-icon stat-icon-success"><i class="bi bi-check2-circle" aria-hidden="true"></i></div>
                         <div class="stat-body">
                             <div class="stat-value" id="statPassing">&ndash;</div>
                             <div class="stat-label">Passing students</div>
                         </div>
-                        <div class="stat-trend text-muted">meets 75% or higher</div>
+                        <div class="stat-trend text-muted">passing threshold</div>
                     </div>
                 </div>
             </section>
@@ -152,15 +152,15 @@
 
                             <!-- Filters -->
                             <div class="row g-2 align-items-end mb-1">
-                                <div class="d-flex flex-wrap align-items-center justify-content-end gap-2">
-                                    <button class="btn btn-outline-primary btn-sm" id="exportBtn" type="button">
+                                <div class="col-12 d-flex flex-wrap align-items-center justify-content-end gap-2">
+                                    <button class="btn btn-outline-primary btn-sm sr-action-btn" id="exportBtn" type="button">
                                         <i class="bi bi-download me-1" aria-hidden="true"></i>Export CSV
                                     </button>
-                                    <button class="btn btn-primary btn-sm" id="addStudentBtn" type="button">
+                                    <button class="btn btn-primary btn-sm sr-action-btn" id="addStudentBtn" type="button">
                                         <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Add student
                                     </button>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-4">
                                     <label class="form-label sr-label" for="studentSearch">Search</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text sr-input-prefix" aria-hidden="true"><i class="bi bi-search"></i></span>
@@ -168,7 +168,7 @@
                                             autocomplete="off" />
                                     </div>
                                 </div>
-                                <div class="col-6 col-md-2">
+                                <div class="col-6 col-sm-6 col-md-2">
                                     <label class="form-label sr-label" for="sectionFilter">Section</label>
                                     <select class="form-select form-select-sm" id="sectionFilter">
                                         <option value="all">All</option>
@@ -177,7 +177,7 @@
                                         <option value="C">Section C</option>
                                     </select>
                                 </div>
-                                <div class="col-6 col-md-2">
+                                <div class="col-6 col-sm-6 col-md-2">
                                     <label class="form-label sr-label" for="remarksFilter">Remarks</label>
                                     <select class="form-select form-select-sm" id="remarksFilter">
                                         <option value="all">All remarks</option>
@@ -185,7 +185,7 @@
                                         <option value="needs">Needs Improvement</option>
                                     </select>
                                 </div>
-                                <div class="col-6 col-md-2">
+                                <div class="col-6 col-sm-6 col-md-2">
                                     <label class="form-label sr-label" for="statusFilter">Status</label>
                                     <select class="form-select form-select-sm" id="statusFilter">
                                         <option value="all">All</option>
@@ -193,8 +193,8 @@
                                         <option value="inactive">Inactive</option>
                                     </select>
                                 </div>
-                                <div class="col-6 col-md-2 d-flex flex-column">
-                                    <span class="sr-label d-block">&nbsp;</span>
+                                <div class="col-6 col-sm-6 col-md-2 d-flex flex-column">
+                                    <span class="sr-label d-none d-md-block" aria-hidden="true">&nbsp;</span>
                                     <button class="btn btn-outline-secondary btn-sm w-100" type="button" id="resetFiltersBtn">
                                         <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Reset
                                     </button>
@@ -256,7 +256,7 @@
         </div>
 <!-- Add / Edit student modal -->
         <div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="studentModalTitle" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h2 class="modal-title h5" id="studentModalTitle">Add student</h2>
@@ -342,7 +342,7 @@
         </div>
 <!-- View student modal -->
         <div class="modal fade" id="viewStudentModal" tabindex="-1" aria-labelledby="viewModalTitle" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h2 class="modal-title h5" id="viewModalTitle">Student profile</h2>
@@ -361,7 +361,7 @@
 
         <!-- Delete confirmation modal -->
         <div class="modal fade" id="deleteStudentModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content border-danger">
                     <div class="modal-header">
                         <h2 class="modal-title h5" id="deleteModalTitle">Delete student record</h2>

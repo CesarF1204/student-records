@@ -73,7 +73,7 @@ export const students = [
         section: "B",
         active: true,
         enrolled: "2026-08-16",
-        scores: [55, 60, 58],
+        scores: [55, 75, 58],
     },
     {
         id: 109,

@@ -162,6 +162,7 @@ a {
     box-shadow: 0 1px 2px rgba(20, 30, 45, 0.04);
     padding: 1rem 1rem 0.75rem;
     height: 100%;
+    text-align: center;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -179,11 +180,19 @@ a {
     border-radius: 10px;
     font-size: 1.15rem;
     margin-bottom: 0.75rem;
+    margin-inline: auto;
 }
 
 .stat-icon-primary   { background: var(--sr-primary-soft);  color: var(--sr-primary); }
 .stat-icon-success   { background: var(--sr-success-soft);  color: var(--sr-success); }
 .stat-icon-accent    { background: var(--sr-warning-soft);  color: var(--sr-warning); }
+
+.stat-body,
+.stat-value,
+.stat-label,
+.stat-trend {
+    text-align: center;
+}
 
 .stat-value {
     font-size: 1.7rem;
@@ -337,7 +346,6 @@ a {
 
 /* ============================ Table ============================ */
 .sr-table {
-    --bs-table-hover-bg: #eef2f8;
     font-size: 0.92rem;
 }
 
@@ -367,13 +375,17 @@ a {
 .sr-sort[aria-sort="ascending"] .sort-icon,
 .sr-sort[aria-sort="descending"] .sort-icon { color: var(--sr-primary); }
 
-.sr-table tbody tr {
-    transition: background-color 0.18s ease, box-shadow 0.18s ease;
+.sr-table tbody > tr > * {
+    --bs-table-bg: transparent;
+    --bs-table-accent-bg: transparent;
+    transition: background-color 0.18s ease;
 }
 
-.sr-table tbody tr:hover {
-    --bs-table-hover-bg: #eef2f8;
-    box-shadow: inset 3px 0 0 rgba(47, 91, 142, 0.35);
+@media (hover: hover) and (min-width: 768px) {
+    .sr-table tbody tr:hover > * {
+        --bs-table-accent-bg: transparent;
+        background-color: #d9e9fa;
+    }
 }
 
 .student-cell {
@@ -462,12 +474,61 @@ a {
 
 .action-drop .dropdown-toggle::after { display: none; }
 .action-drop .dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
     color: var(--sr-muted);
-    background: none;
-    border: 1px solid var(--sr-border);
+    background-color: transparent;
+    box-shadow: none;
+    line-height: 1;
+    transition: background-color 0.18s ease, color 0.18s ease;
 }
 
-.action-drop .dropdown-toggle:hover { color: var(--sr-primary); }
+.action-drop .dropdown-toggle:hover,
+.action-drop .dropdown-toggle:focus-visible {
+    color: var(--sr-ink);
+    background-color: #d9e9fa;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.action-drop .dropdown-toggle:active,
+.action-drop .dropdown-toggle.show {
+    color: var(--sr-ink);
+    background-color: #c4ddf5;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.action-drop .dropdown-toggle .bi {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.action-drop .dropdown-menu {
+    border-color: var(--sr-border);
+}
+
+.action-drop .dropdown-item {
+    transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.action-drop .dropdown-item:hover,
+.action-drop .dropdown-item:focus-visible {
+    background-color: #d9e9fa;
+    color: var(--sr-ink);
+}
+
+.action-drop .dropdown-item.text-danger:hover,
+.action-drop .dropdown-item.text-danger:focus-visible {
+    background-color: var(--sr-danger-soft);
+    color: var(--sr-danger);
+}
 
 .avg-good { --bs-progress-bar-bg: var(--sr-success); color: var(--sr-success); }
 .avg-warn { --bs-progress-bar-bg: var(--sr-warning); color: var(--sr-warning); }
@@ -625,16 +686,262 @@ a {
 
 @media (prefers-reduced-motion: reduce) {
     .skeleton { animation: none; }
+    .sr-table tbody > tr > *,
+    .action-drop .dropdown-toggle {
+        transition: none;
+    }
 }
 
 /* ============================ Responsive refinements ============================ */
-@media (max-width: 575.98px) {
-    .stat-value { font-size: 1.4rem; }
-    .sr-filters .row { row-gap: 0.75rem; }
+/* Prevent accidental horizontal scroll from wide pills / dropdowns */
+html, body {
+    overflow-x: hidden;
 }
 
-@media (max-width: 767.98px) {
+.sr-find-result {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* --- Mobile: find-by-ID block stacks cleanly --- */
+@media (max-width: 575.98px) {
+    .sr-container {
+        padding-left: 0.85rem;
+        padding-right: 0.85rem;
+    }
+
+    .sr-title { font-size: 1.35rem; }
+
+    .sr-stat {
+        padding: 0.85rem 0.9rem 0.7rem;
+    }
+    .stat-value { font-size: 1.4rem; }
+    .stat-icon { width: 34px; height: 34px; font-size: 1rem; margin-bottom: 0.55rem; }
+
+    /* Find block: label on its own line, input + buttons fluid */
+    .sr-find-block { width: 100%; }
+    .sr-find-row {
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+    .sr-find-label {
+        flex: 0 0 100%;
+        white-space: normal;
+        margin-bottom: 0.1rem;
+    }
+    .sr-find-input {
+        flex: 1 1 150px;
+        width: auto;
+        min-width: 0;
+    }
+    .sr-find-row .btn {
+        flex: 1 1 auto;
+        white-space: nowrap;
+    }
+    .sr-find-output { width: 100%; }
+    .sr-find-result {
+        width: 100%;
+        white-space: normal;
+    }
+
+    /* Filters: search full width, selects 2-up, buttons full width */
+    .sr-filters .row { row-gap: 0.75rem; }
+    .sr-action-btn {
+        flex: 1 1 140px;
+    }
+
+    /* Pagination wraps without overflow */
+    .sr-pagination {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+    .sr-pagination #resultRange {
+        margin-right: 0 !important;
+        text-align: center;
+    }
+    .sr-pagination > div:last-child {
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* --- Table -> cards --- */
+    .table-responsive { overflow-x: visible; }
+    .sr-table thead { display: none; }
+    .sr-table, .sr-table tbody, .sr-table tr, .sr-table td {
+        display: block;
+        width: 100%;
+    }
+    .sr-table tbody { padding-top: 0.65rem; }
+    .sr-table tbody tr {
+        border: 1px solid var(--sr-border);
+        border-radius: 10px;
+        margin: 0 0.65rem 0.65rem;
+        width: auto;
+        padding: 0.7rem 0.85rem;
+        background: var(--sr-surface);
+        box-shadow: 0 1px 2px rgba(20, 30, 45, 0.04);
+        display: flex;
+        flex-direction: column;
+    }
+    .sr-table tbody tr.skeleton-row { padding: 0.85rem; }
+    .sr-table tbody tr.skeleton-row td { display: block; }
+    .sr-table tbody td {
+        border: 0 !important;
+        padding: 0.3rem 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        text-align: right;
+    }
+    /* Empty states span full card — keep centered, no label */
+    .sr-table tbody td[colspan] {
+        display: block;
+        text-align: center;
+    }
+    .sr-table tbody td[colspan]::before { content: none !important; }
+    /* Student cell keeps avatar + name centered and always first on mobile */
+    .sr-table tbody td[data-label="Student"] {
+        order: -1;
+        justify-content: center;
+        text-align: center;
+    }
+    .sr-table tbody td.sr-actions-cell {
+        order: 99;
+        justify-content: center;
+        padding-top: 0.6rem !important;
+        margin-top: 0.35rem;
+        border-top: 1px solid var(--sr-border) !important;
+    }
+    /* Mobile: no kebab — show View / Edit / Delete inline below each student */
+    .sr-table tbody td.sr-actions-cell .action-drop {
+        width: 100%;
+    }
+    .sr-table tbody td.sr-actions-cell .action-drop .dropdown-toggle {
+        display: none !important;
+    }
+    .sr-table tbody td.sr-actions-cell .action-drop .dropdown-menu {
+        display: flex !important;
+        position: static !important;
+        inset: auto !important;
+        transform: none !important;
+        float: none;
+        width: 100%;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none !important;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .sr-table tbody td.sr-actions-cell .action-drop .dropdown-menu li {
+        flex: 1 1 0;
+        display: flex;
+    }
+    .sr-table tbody td.sr-actions-cell .action-drop .dropdown-menu li:has(.dropdown-divider),
+    .sr-table tbody td.sr-actions-cell .action-drop .dropdown-divider {
+        display: none !important;
+    }
+    .sr-table tbody td.sr-actions-cell .action-drop .dropdown-item {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        width: 100%;
+        padding: 0.45rem 0.5rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--sr-primary);
+        background: var(--sr-surface);
+        border: 1px solid var(--sr-border);
+        border-radius: 8px;
+        text-align: center;
+    }
+    .sr-table tbody td.sr-actions-cell .action-drop .dropdown-item:hover,
+    .sr-table tbody td.sr-actions-cell .action-drop .dropdown-item:focus-visible {
+        background: var(--sr-primary-soft);
+        color: var(--sr-primary-strong);
+    }
+    .sr-table tbody td.sr-actions-cell .action-drop .dropdown-item.text-danger {
+        color: var(--sr-danger);
+    }
+    .sr-table tbody td.sr-actions-cell .action-drop .dropdown-item.text-danger:hover,
+    .sr-table tbody td.sr-actions-cell .action-drop .dropdown-item.text-danger:focus-visible {
+        background: var(--sr-danger-soft);
+        color: var(--sr-danger);
+    }
+    .sr-table tbody td.sr-actions-cell .action-drop .dropdown-item .me-2 {
+        margin-right: 0.35rem !important;
+    }
+    .sr-table tbody td[data-label]:not([data-label=""]):not([data-label="Student"])::before {
+        content: attr(data-label);
+        flex: 0 0 auto;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--sr-muted);
+        text-align: left;
+        margin-right: auto;
+        padding-right: 0.75rem;
+    }
+    .sr-table tbody td .student-cell { width: 100%; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; text-align: center; }
+    .sr-table tbody td .avg-cell { justify-content: flex-end; min-width: 0; text-align: right; }
+
+    .student-meta { min-width: 0; flex: none; width: 100%; text-align: center; }
+    .student-meta .name { text-align: center; }
+    .student-meta .email {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 46vw;
+        margin-inline: auto;
+        text-align: center;
+    }
+
+    /* Modals stay centered on small screens with safe side margins */
+    .modal-dialog-centered {
+        margin: 0.6rem auto;
+        max-width: calc(100% - 1.2rem);
+    }
+    .modal-footer { flex-wrap: wrap; }
+    .modal-footer .btn { flex: 1 1 auto; }
+
+    .toast-container {
+        left: 0.75rem;
+        right: 0.75rem;
+        padding: 0 !important;
+    }
+    .sr-toast { width: 100%; }
+}
+
+/* Modals are always centered (all screens) — Bootstrap's
+   .modal-dialog-centered handles vertical centering; keep
+   horizontal auto margins intact. */
+.modal-dialog-centered {
+    margin-inline: auto;
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
     .student-cell { gap: 0.4rem; }
-    .student-meta .email { display: none; }
+    .student-meta .email {
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .sr-find-block { width: 100%; }
+    .sr-find-input { flex: 1 1 170px; width: auto; }
     .sr-user-btn span.avatar-sm { margin-right: 0.3rem; }
+}
+
+@media (max-width: 991.98px) {
+    /* Keep collapsed navbar content from overflowing on small screens */
+    #primaryNav .d-flex { width: 100%; margin-top: 0.5rem; }
 }
