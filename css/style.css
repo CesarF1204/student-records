@@ -424,14 +424,40 @@ a {
     align-items: center;
     gap: 0.45rem;
     min-width: 110px;
+    flex-wrap: wrap;
 }
 
-.avg-cell .progress {
-    height: 8px;
-    width: 62px;
-    border-radius: 4px;
-    background: #e6eaf1;
-    --bs-progress-bar-bg: var(--sr-success);
+.score-list {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.score-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.1rem;
+    padding: 0.15rem 0.45rem;
+    border: 1.5px solid currentColor;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.2;
+    background: var(--sr-surface);
+}
+
+.score-pass {
+    color: var(--sr-success);
+    border-color: var(--sr-success);
+    background: var(--sr-success-soft);
+}
+
+.score-fail {
+    color: var(--sr-danger);
+    border-color: var(--sr-danger);
+    background: var(--sr-danger-soft);
 }
 
 .action-drop .dropdown-toggle::after { display: none; }

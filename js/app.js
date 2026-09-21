@@ -124,7 +124,7 @@ const renderStats = () => {
     const passing = records.filter((r) => r.isPassed).length;
 
     statShown.textContent = shown;
-    statAvg.textContent = classAvg.toFixed(1) + "%";
+    statAvg.textContent = classAvg.toFixed(2) + "%";
     statPassing.textContent = passing;
 
     trendShown.innerHTML = `<span class="text-muted">${shown} of ${total} total</span>`;
@@ -196,11 +196,19 @@ const filteredRecords = () => {
 };
 
 /* ========================== Table rendering =========================== */
-const avgClass = (average) =>
-    average >= 85 ? "avg-good" : average >= PASS_THRESHOLD ? "avg-good" : "avg-warn";
+const avgClass = (average) => (average >= PASS_THRESHOLD ? "avg-good" : "avg-bad");
 
-const avgProgressColor = (average) =>
-    average >= PASS_THRESHOLD ? "var(--sr-success)" : "var(--sr-warning)";
+const scoreClass = (score) => (score >= PASS_THRESHOLD ? "score-pass" : "score-fail");
+
+const scoresTemplate = (r) =>
+    r.scores
+        .map(
+            (s) =>
+                `<span class="score-box ${scoreClass(s)}" title="${
+                    s >= PASS_THRESHOLD ? "Passing" : "Failing"
+                } (${escapeHtml(s)} vs passing ${PASS_THRESHOLD})">${escapeHtml(s)}</span>`
+        )
+        .join("");
 
 const rowTemplate = (r) => `
     <tr>
@@ -218,10 +226,7 @@ const rowTemplate = (r) => `
         <td>${escapeHtml(r.grade)}</td>
         <td>
             <div class="avg-cell ${avgClass(r.average)}" title="${r.isPassed ? "Passing" : "Needs improvement"}">
-                <div class="progress" role="progressbar" aria-valuenow="${r.average.toFixed(0)}"
-                    aria-valuemin="0" aria-valuemax="100" aria-label="Average for ${escapeHtml(r.name)}">
-                    <div class="progress-bar" style="width: ${Math.min(100, r.average)}%; background: ${avgProgressColor(r.average)}"></div>
-                </div>
+                <div class="score-list" aria-label="Scores for ${escapeHtml(r.name)}">${scoresTemplate(r)}</div>
                 <strong>${r.average.toFixed(2)}%</strong>
             </div>
         </td>
