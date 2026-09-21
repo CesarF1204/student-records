@@ -533,7 +533,7 @@ const hideFindResult = () => {
 };
 
 const findResultText = (r) =>
-    `${avatarHtml(r.name, r.avatarUrl, "xs")}<span class="sr-find-text">#${r.id} &middot; ${escapeHtml(r.name)} &middot; ${escapeHtml(r.section)} &middot; ${r.average.toFixed(2)}</span>`;
+    `${avatarHtml(r.name, r.avatarUrl, "xs")}<span class="sr-find-text">${escapeHtml(r.name)} | Section ${escapeHtml(r.section)} | Average: ${r.average.toFixed(2)} | ${r.isPassed ? "Passed" : "Needs Improvement"}</span>`;
 
 const applyFind = () => {
     const raw = findStudentInput.value.trim();
@@ -541,7 +541,7 @@ const applyFind = () => {
 
     if (raw !== "" && (!Number.isFinite(id) || id <= 0)) {
         hideFindResult();
-        setFindStatus("err", "Enter a positive student ID (e.g. 101).");
+        setFindStatus("err", "Enter a valid student ID (e.g. 101).");
         return;
     }
 
@@ -946,6 +946,11 @@ const init = () => {
         day: "numeric",
         year: "numeric",
     });
+
+    const footerYear = $("#footerYear");
+    if (footerYear) {
+        footerYear.textContent = String(new Date().getFullYear());
+    }
 
     wireEvents();
     renderAdminAvatars();

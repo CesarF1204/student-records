@@ -51,6 +51,15 @@ body {
     color: var(--sr-ink);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#mainContent {
+    flex: 1 0 auto;
+    width: 100%;
+    padding-bottom: 1.5rem;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6,
@@ -219,19 +228,26 @@ a {
     font-size: 0.9rem;
     font-weight: 600;
     line-height: 1.4;
-    white-space: nowrap;
-    overflow: hidden;
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: anywhere;
 }
 .sr-find-result[hidden] {
     display: none;
 }
 
 .sr-find-result .sr-find-text {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 260px;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    max-width: none;
     min-width: 0;
+    flex: 1 1 auto;
+    overflow-wrap: anywhere;
+}
+
+.sr-find-result .avatar {
+    flex: 0 0 auto;
 }
 
 /* Delete modal identity row */
@@ -710,6 +726,61 @@ a {
     width: auto;
 }
 
+/* ============================ Application footer ============================ */
+.sr-footer {
+    flex-shrink: 0;
+    background: var(--sr-surface);
+    border-top: 1px solid var(--sr-border);
+    margin-top: 0.5rem;
+}
+
+.sr-footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.75rem 1.5rem;
+    flex-wrap: wrap;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+}
+
+.sr-footer-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    width: 100%;
+    min-width: 0;
+    font-size: 0.85rem;
+    color: var(--sr-muted);
+}
+
+.sr-footer-copy {
+    color: var(--sr-muted);
+    line-height: 1.4;
+    text-align: center;
+    width: 100%;
+    text-wrap: balance;
+}
+
+@media (max-width: 575.98px) {
+    .sr-footer-inner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.65rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    .sr-footer-brand {
+        justify-content: center;
+        text-align: center;
+    }
+}
+
 /* ============================ Forms & modals ============================ */
 .sr-legend {
     font-size: 0.85rem;
@@ -819,12 +890,19 @@ html, body {
 
 .sr-find-result .sr-find-text {
     min-width: 0;
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
 }
 
 @media (max-width: 767.98px) {
     .sr-find-result .sr-find-text {
         max-width: none;
         white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
         overflow-wrap: anywhere;
         word-break: break-word;
     }
@@ -864,10 +942,13 @@ html, body {
     .sr-find-result {
         width: 100%;
         white-space: normal;
+        overflow: visible;
     }
     .sr-find-result .sr-find-text {
         max-width: none;
         white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
         overflow-wrap: anywhere;
         word-break: break-word;
     }
