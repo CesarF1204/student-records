@@ -643,6 +643,8 @@ a {
 
 .action-drop .dropdown-menu {
     border-color: var(--sr-border);
+    /* Fixed-strategy Popper output floats above the table-responsive clipping context */
+    z-index: 1050;
 }
 
 .action-drop .dropdown-item {

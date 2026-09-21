@@ -378,6 +378,7 @@ const rowTemplate = (r) => `
         <td class="text-end sr-actions-cell" data-label="">
             <div class="dropdown action-drop">
                 <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    data-bs-boundary="viewport" data-bs-popper-config='{"strategy":"fixed"}'
                     aria-expanded="false" aria-label="Actions for ${escapeHtml(r.name)}">
                     <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
                 </button>
