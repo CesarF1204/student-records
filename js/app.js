@@ -34,12 +34,70 @@ const resetFiltersBtn = $("#resetFiltersBtn");
 const todayLabel = $("#todayLabel");
 
 /* ------------------------------- Tooling --------------------------------- */
-const debounce = (callback, delay = 300) => {
+const debounce = (callback, delay = 1500) => {
     let timer;
     return (...args) => {
         clearTimeout(timer);
         timer = setTimeout(() => callback(...args), delay);
     };
+};
+
+// Never allow leading whitespace to be typed/pasted into a field
+const preventLeadingSpace = (input) => {
+    input.addEventListener("keydown", (e) => {
+        if (e.key === " " && input.selectionStart === 0) {
+            e.preventDefault();
+        }
+    });
+    input.addEventListener("input", () => {
+        if (/^\s/.test(input.value)) {
+            input.value = input.value.replace(/^\s+/, "");
+        }
+    });
+};
+
+// Block EVERY space inside emails (valid emails never contain spaces)
+const preventAnySpace = (input) => {
+    input.addEventListener("keydown", (e) => {
+        if (e.key === " ") {
+            e.preventDefault();
+        }
+    });
+    input.addEventListener("input", () => {
+        if (/\s/.test(input.value)) {
+            const pos = input.selectionStart ?? input.value.length;
+            const removedBefore = (input.value.slice(0, pos).match(/\s/g) || []).length;
+            input.value = input.value.replace(/\s+/g, "");
+            const nextPos = Math.max(0, pos - removedBefore);
+            try {
+                input.setSelectionRange(nextPos, nextPos);
+            } catch {
+                /* input type may not support caret — ignore */
+            }
+        }
+    });
+    // Pasted "  name@school.edu  " -> "name@school.edu" instantly
+    input.addEventListener("paste", (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData?.getData("text") ?? "").replace(/\s+/g, "");
+        const start = input.selectionStart ?? input.value.length;
+        const end = input.selectionEnd ?? input.value.length;
+        input.value = input.value.slice(0, start) + text + input.value.slice(end);
+        const nextPos = start + text.length;
+        try {
+            input.setSelectionRange(nextPos, nextPos);
+        } catch {
+            /* ignore */
+        }
+    });
+};
+
+// Trim outer whitespace when leaving the field so the saved value is clean
+const trimOnBlur = (input) => {
+    input.addEventListener("blur", () => {
+        const trimmed = input.value.trim();
+        if (input.value !== trimmed) input.value = trimmed;
+    });
 };
 
 const escapeHtml = (value) =>
@@ -673,11 +731,13 @@ const wireEvents = () => {
         if (findStudentInput.value.trim() === "") clearFind();
     }, 250));
 
-    // Filters
+    // Filters — never allow leading spaces in the search field
+    preventLeadingSpace(searchInput);
+
     searchInput.addEventListener(
         "input",
         debounce(() => {
-            state.search = searchInput.value;
+            state.search = searchInput.value.trim();
             state.page = 1;
             renderAll();
         })
@@ -723,6 +783,18 @@ const wireEvents = () => {
     // Add / save
     $("#addStudentBtn").addEventListener("click", () => openStudentModal());
     $("#saveStudentBtn").addEventListener("click", saveStudent);
+
+    // Add/Edit modal: Full name (no leading space) + Email (no spaces at all)
+    const nameInput = $("#nameInput");
+    if (nameInput) {
+        preventLeadingSpace(nameInput);
+        trimOnBlur(nameInput);
+    }
+    const emailInput = $("#emailInput");
+    if (emailInput) {
+        preventAnySpace(emailInput);
+        trimOnBlur(emailInput);
+    }
 
     // View -> edit
     $("#viewEditBtn").addEventListener("click", () => {
