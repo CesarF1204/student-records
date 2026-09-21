@@ -45,13 +45,21 @@
                         <span class="text-muted d-none d-lg-inline" id="todayLabel" aria-hidden="true"></span>
                         <div class="dropdown">
                             <button class="btn btn-light btn-sm sr-user-btn d-flex align-items-center" type="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="avatar avatar-sm me-2">A</span>
+                                data-bs-toggle="dropdown" aria-expanded="false" aria-label="Admin account menu">
+                                <span class="avatar avatar-sm avatar-tone-0 me-2" id="adminAvatar" aria-hidden="true">A</span>
                                 <span class="d-none d-md-inline">Admin</span>
                                 <i class="bi bi-chevron-down ms-2 small" aria-hidden="true"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                <li><span class="dropdown-item-text small text-muted">Signed in as admin@school.edu</span></li>
+                                <li>
+                                    <div class="sr-account-header">
+                                        <span class="avatar avatar-md avatar-tone-0" id="adminAvatarMenu" aria-hidden="true">A</span>
+                                        <div class="min-w-0">
+                                            <div class="sr-account-name">Admin</div>
+                                            <div class="sr-account-email">admin@school.edu</div>
+                                        </div>
+                                    </div>
+                                </li>
                                 <li><hr class="dropdown-divider" /></li>
                                 <li><a class="dropdown-item" href="#">Account settings</a></li>
                                 <li><a class="dropdown-item" href="#">Sign out</a></li>
@@ -118,7 +126,7 @@
                 <div class="col-12" id="records">
                     <div class="card sr-card">
                         <div class="card-header sr-card-header py-3 d-flex flex-wrap align-items-center gap-2">
-                            <h2 class="h5 mb-0">Student records</h2>
+                            <h2 class="h5 mb-0">Find student by ID</h2>
                         </div>
 
                         <!-- Find student by ID -->
@@ -126,11 +134,11 @@
                             <div class="d-flex flex-wrap align-items-end justify-content-between gap-3">
                                 <div class="sr-find-block">
                                     <div class="sr-find-row">
-                                        <label class="form-label sr-label sr-find-label" for="findStudentInput">Find student by ID</label>
                                         <div class="input-group input-group-sm sr-find-input">
                                             <span class="input-group-text sr-input-prefix" aria-hidden="true"><i class="bi bi-hash"></i></span>
                                             <input type="number" class="form-control" id="findStudentInput"
-                                                placeholder="ID (e.g. 101)" min="1" step="1" autocomplete="off" inputmode="numeric" />
+                                                placeholder="ID (e.g. 101)" min="1" step="1" autocomplete="off" inputmode="numeric"
+                                                aria-label="Student ID" />
                                         </div>
                                         <button class="btn btn-primary btn-sm flex-shrink-0" type="button" id="findStudentBtn">
                                             <i class="bi bi-search me-1" aria-hidden="true"></i>Find
@@ -282,6 +290,16 @@
                                         <input type="email" class="form-control" id="emailInput" placeholder="name@school.edu" required />
                                         <div class="invalid-feedback">Enter a valid email address.</div>
                                     </div>
+                                    <div class="col-12">
+                                        <label class="form-label sr-label" for="avatarInput">Avatar image URL <span class="text-muted fw-normal">(optional)</span></label>
+                                        <div class="sr-avatar-field">
+                                            <span class="avatar avatar-md avatar-tone-0" id="avatarPreview" aria-hidden="true">?</span>
+                                            <input type="url" class="form-control" id="avatarInput" placeholder="https://example.com/photo.jpg"
+                                                autocomplete="off" inputmode="url" />
+                                        </div>
+                                        <div class="form-text">Leave blank to keep the polished initials avatar. Broken links fall back automatically.</div>
+                                        <div class="invalid-feedback" id="avatarError">Enter a valid image URL (http/https) or leave blank.</div>
+                                    </div>
                                 </div>
                             </fieldset>
 
@@ -368,9 +386,9 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>
+                        <p class="mb-2">
                             Are you sure you want to permanently remove
-                            <strong id="deleteStudentName">&hellip;</strong> from the student records?
+                            <span id="deleteStudentName">&hellip;</span> from the student records?
                             This action cannot be undone.
                         </p>
                     </div>

@@ -117,12 +117,84 @@ const formatDate = (iso) => {
 };
 
 const initials = (name) =>
-    name
-        .split(" ")
+    String(name ?? "")
+        .trim()
+        .split(/\s+/)
         .filter(Boolean)
         .slice(0, 2)
         .map((n) => n[0].toUpperCase())
-        .join("");
+        .join("") || "?";
+
+/* ------------------------- Avatar (single source) ------------------------- */
+// One reusable avatar system: optional image URL if available, otherwise a
+// polished deterministic initials fallback (no random photos, so no false
+// identity). `size` maps to .avatar-xs/sm/md/lg.
+const AVATAR_TONES = 6;
+
+const avatarTone = (name) => {
+    const text = String(name ?? "");
+    let hash = 0;
+    for (let i = 0; i < text.length; i += 1) {
+        hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
+    }
+    return hash % AVATAR_TONES;
+};
+
+const sanitizeAvatarUrl = (url) => {
+    const clean = String(url ?? "").trim();
+    if (!clean) return "";
+    // Only allow http(s) URLs (and relative paths) so no javascript:/data: URIs.
+    if (/^(https?:\/\/|\.\.?\/|\/)/i.test(clean)) return clean;
+    return "";
+};
+
+const avatarHtml = (name, avatarUrl, size = "md", extraClass = "") => {
+    const safeName = escapeHtml(String(name ?? "User"));
+    const tone = avatarTone(name);
+    const src = sanitizeAvatarUrl(avatarUrl);
+    const cls = `avatar avatar-${size} avatar-tone-${tone}${extraClass ? ` ${extraClass}` : ""}`;
+    const img = src
+        ? `<img src="${escapeHtml(src)}" alt="" loading="lazy" onerror="this.remove()" />`
+        : "";
+    return `<span class="${cls}" role="img" aria-label="${safeName} avatar">${img}${escapeHtml(initials(name))}</span>`;
+};
+
+const paintAvatarEl = (el, name, avatarUrl) => {
+    if (!el) return;
+    const src = sanitizeAvatarUrl(avatarUrl);
+    el.classList.remove(
+        "avatar-tone-0",
+        "avatar-tone-1",
+        "avatar-tone-2",
+        "avatar-tone-3",
+        "avatar-tone-4",
+        "avatar-tone-5"
+    );
+    el.classList.add(`avatar-tone-${avatarTone(name)}`);
+    el.querySelector("img")?.remove();
+    if (src) {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "";
+        img.loading = "lazy";
+        img.addEventListener("error", () => img.remove());
+        el.prepend(img);
+    }
+    // Keep the initials text node in sync.
+    Array.from(el.childNodes).forEach((node) => {
+        if (node.nodeType === Node.TEXT_NODE) node.remove();
+    });
+    el.append(document.createTextNode(initials(name)));
+    el.setAttribute("aria-label", `${String(name ?? "User")} avatar`);
+};
+
+// Admin identity — same avatar system as every other user.
+const ADMIN = { name: "Admin", email: "admin@school.edu", avatarUrl: "https://cdn-icons-png.flaticon.com/128/3135/3135715.png" };
+
+const renderAdminAvatars = () => {
+    paintAvatarEl($("#adminAvatar"), ADMIN.name, ADMIN.avatarUrl);
+    paintAvatarEl($("#adminAvatarMenu"), ADMIN.name, ADMIN.avatarUrl);
+};
 
 /* --------------------------- Derived student ------------------------------ */
 // Enrich the raw student with a computed average and pass flag, keeping the
@@ -276,7 +348,7 @@ const rowTemplate = (r) => `
         <td class="sr-id-cell" data-label="ID">#${r.id}</td>
         <td data-label="Student">
             <div class="student-cell">
-                <span class="avatar avatar-md">${escapeHtml(initials(r.name))}</span>
+                ${avatarHtml(r.name, r.avatarUrl, "md")}
                 <div class="student-meta">
                     <div class="name">${escapeHtml(r.name)}</div>
                     <div class="email">${escapeHtml(r.email)}</div>
@@ -296,7 +368,7 @@ const rowTemplate = (r) => `
             </span>
         </td>
         <td data-label="Enrolled">
-            <span class="text-nowrap">${formatDate(r.enrolled)}</span>
+            <span class="text-nowrap sr-enrolled-date">${formatDate(r.enrolled)}</span>
         </td>
         <td data-label="Status">
             <span class="badge badge-soft ${r.active ? "badge-soft-success" : "badge-soft-muted"}">
@@ -461,7 +533,7 @@ const hideFindResult = () => {
 };
 
 const findResultText = (r) =>
-    `${escapeHtml(r.name)} | Section ${escapeHtml(r.section)} | Average: ${r.average.toFixed(2)} | ${r.isPassed ? "Passed" : "Needs improvement"}`;
+    `${avatarHtml(r.name, r.avatarUrl, "xs")}<span class="sr-find-text">#${r.id} &middot; ${escapeHtml(r.name)} &middot; ${escapeHtml(r.section)} &middot; ${r.average.toFixed(2)}</span>`;
 
 const applyFind = () => {
     const raw = findStudentInput.value.trim();
@@ -476,6 +548,7 @@ const applyFind = () => {
     if (id == null) {
         hideFindResult();
         setFindStatus("info", "Enter a student ID and press Find (or Enter) to view that record.");
+        findStudentInput.focus();
         return;
     }
 
@@ -523,6 +596,7 @@ const renderAll = () => {
 const formFields = () => ({
     name: $("#nameInput"),
     email: $("#emailInput"),
+    avatarUrl: $("#avatarInput"),
     section: $("#sectionInput"),
     enrolled: $("#enrolledInput"),
     active: $("#activeInput"),
@@ -542,6 +616,23 @@ const markInvalid = (el, valid) => {
     el.classList.add(valid ? "is-valid" : "is-invalid");
 };
 
+const isValidAvatarUrl = (value) => {
+    const clean = String(value ?? "").trim();
+    if (!clean) return true;
+    try {
+        const url = new URL(clean);
+        return url.protocol === "http:" || url.protocol === "https:";
+    } catch {
+        return false;
+    }
+};
+
+const refreshAvatarPreview = () => {
+    const f = formFields();
+    if (!f.avatarUrl) return;
+    paintAvatarEl($("#avatarPreview"), f.name.value.trim() || "?", f.avatarUrl.value);
+};
+
 const openStudentModal = (id) => {
     clearValidation();
     const f = formFields();
@@ -554,6 +645,7 @@ const openStudentModal = (id) => {
         $("#recordId").value = r.id;
         f.name.value = r.name;
         f.email.value = r.email;
+        f.avatarUrl.value = r.avatarUrl ?? "";
         f.section.value = r.section;
         f.enrolled.value = r.enrolled;
         f.active.checked = r.active;
@@ -566,6 +658,7 @@ const openStudentModal = (id) => {
         $("#recordId").value = nextId();
         f.name.value = "";
         f.email.value = "";
+        f.avatarUrl.value = "";
         f.section.value = "A";
         f.enrolled.value = new Date().toISOString().slice(0, 10);
         f.active.checked = true;
@@ -574,6 +667,7 @@ const openStudentModal = (id) => {
         f.score3.value = "";
     }
 
+    refreshAvatarPreview();
     studentModal.show();
 };
 
@@ -587,6 +681,10 @@ const validateForm = () => {
 
     markInvalid(f.email, emailRe.test(f.email.value.trim()));
     valid = emailRe.test(f.email.value.trim()) && valid;
+
+    const avatarOk = isValidAvatarUrl(f.avatarUrl.value);
+    markInvalid(f.avatarUrl, avatarOk);
+    valid = avatarOk && valid;
 
     if (!f.enrolled.value) {
         markInvalid(f.enrolled, false);
@@ -617,6 +715,7 @@ const saveStudent = () => {
     const payload = {
         name: f.name.value.trim(),
         email: f.email.value.trim(),
+        avatarUrl: f.avatarUrl.value.trim(),
         section: f.section.value,
         enrolled: f.enrolled.value,
         active: f.active.checked,
@@ -659,8 +758,8 @@ const openViewModal = (id) => {
 
     $("#viewModalBody").innerHTML = `
         <div class="d-flex align-items-center gap-3 mb-3">
-            <span class="avatar avatar-md" style="width:48px;height:48px;font-size:1.1rem;">${escapeHtml(initials(r.name))}</span>
-            <div>
+            ${avatarHtml(r.name, r.avatarUrl, "lg")}
+            <div class="min-w-0">
                 <div class="h6 mb-0">${escapeHtml(r.name)}</div>
                 <div class="text-muted small">${escapeHtml(r.email)}</div>
             </div>
@@ -698,7 +797,14 @@ const openDeleteModal = (id) => {
     const r = records.find((rec) => rec.id === id);
     if (!r) return;
     state.deleteId = id;
-    $("#deleteStudentName").textContent = `${r.name} (ID ${r.id})`;
+    $("#deleteStudentName").innerHTML = `
+        <span class="sr-identity-row">
+            ${avatarHtml(r.name, r.avatarUrl, "sm")}
+            <span class="min-w-0">
+                <span class="sr-identity-name d-block">${escapeHtml(r.name)} (ID ${r.id})</span>
+                <span class="sr-identity-sub d-block">${escapeHtml(r.email)} &middot; Section ${escapeHtml(r.section)}</span>
+            </span>
+        </span>`;
     deleteModal.show();
 };
 
@@ -789,11 +895,24 @@ const wireEvents = () => {
     if (nameInput) {
         preventLeadingSpace(nameInput);
         trimOnBlur(nameInput);
+        nameInput.addEventListener("input", refreshAvatarPreview);
     }
     const emailInput = $("#emailInput");
     if (emailInput) {
         preventAnySpace(emailInput);
         trimOnBlur(emailInput);
+    }
+    const avatarInput = $("#avatarInput");
+    if (avatarInput) {
+        preventAnySpace(avatarInput);
+        trimOnBlur(avatarInput);
+        avatarInput.addEventListener("input", () => {
+            refreshAvatarPreview();
+            // Live validation feel without blocking typing a URL.
+            if (avatarInput.value.trim() === "" || isValidAvatarUrl(avatarInput.value)) {
+                avatarInput.classList.remove("is-invalid");
+            }
+        });
     }
 
     // View -> edit
@@ -829,6 +948,7 @@ const init = () => {
     });
 
     wireEvents();
+    renderAdminAvatars();
     showLoading();
 
     // Brief simulated load, then render.
