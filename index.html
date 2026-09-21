@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Student Record Application</title>
+        <link rel="stylesheet" href="./css/style.css" />
+    </head>
+    <body>
+        <main class="container">
+            <header class="page-header">
+                <h1>Student Record Application</h1>
+                <p>Search, filter, and summarize student performance.</p>
+            </header>
+
+            <section class="controls" aria-label="Student filters">
+                <label>
+                    Search by name
+                    <input
+                        id="searchInput"
+                        type="search"
+                        placeholder="e.g. Ana"
+                    />
+                </label>
+
+                <label>
+                    Section
+                    <select id="sectionFilter">
+                        <option value="all">All Sections</option>
+                        <option value="A">Section A</option>
+                        <option value="B">Section B</option>
+                        <option value="C">Section C</option>
+                    </select>
+                </label>
+
+                <label>
+                    Status
+                    <select id="statusFilter">
+                        <option value="all">All Students</option>
+                        <option value="passed">Passed</option>
+                        <option value="failed">Needs Improvement</option>
+                    </select>
+                </label>
+            </section>
+
+            <section class="summary" aria-label="Class summary">
+                <p id="resultCount"></p>
+                <p id="classAverage"></p>
+                <p id="passingSummary"></p>
+            </section>
+
+            <section class="lookup">
+                <h2>Find Student by ID</h2>
+                <div class="lookup-row">
+                    <input
+                        id="studentIdInput"
+                        type="number"
+                        placeholder="Student ID"
+                    />
+                    <button id="findStudentBtn" type="button">
+                        Find Student
+                    </button>
+                </div>
+                <p id="lookupResult" aria-live="polite"></p>
+            </section>
+
+            <section>
+                <h2>Student Records</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Section</th>
+                                <th>Scores</th>
+                                <th>Average</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <script type="module" src="./js/app.js"></script>
+    </body>
+</html>
