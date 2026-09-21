@@ -1,14 +1,13 @@
 // Master student records used by the dashboard.
 // Each record keeps the original id, name, section and scores from the
-// legacy app and adds the fields a registrar needs day-to-day: contact
-// email, grade/year level, enrollment "active" flag and enrollment date.
+// web app and adds the fields. an admin needs day-to-day: contact
+// email, enrollment "active" flag and enrollment date.
 export const students = [
     {
         id: 101,
         name: "Ana Santos",
         email: "ana.santos@school.edu",
         section: "A",
-        grade: "Grade 10",
         active: true,
         enrolled: "2026-08-15",
         scores: [90, 85, 88],
@@ -18,7 +17,6 @@ export const students = [
         name: "Ben Cruz",
         email: "ben.cruz@school.edu",
         section: "A",
-        grade: "Grade 10",
         active: true,
         enrolled: "2026-08-15",
         scores: [70, 72, 74],
@@ -28,7 +26,6 @@ export const students = [
         name: "Carlo Reyes",
         email: "carlo.reyes@school.edu",
         section: "B",
-        grade: "Grade 11",
         active: true,
         enrolled: "2026-08-20",
         scores: [95, 90, 92],
@@ -38,7 +35,6 @@ export const students = [
         name: "Dina Garcia",
         email: "dina.garcia@school.edu",
         section: "B",
-        grade: "Grade 11",
         active: true,
         enrolled: "2026-08-20",
         scores: [78, 82, 80],
@@ -48,7 +44,6 @@ export const students = [
         name: "Eric Mendoza",
         email: "eric.mendoza@school.edu",
         section: "C",
-        grade: "Grade 10",
         active: false,
         enrolled: "2026-08-18",
         scores: [65, 68, 70],
@@ -58,7 +53,6 @@ export const students = [
         name: "Faith Lim",
         email: "faith.lim@school.edu",
         section: "C",
-        grade: "Grade 9",
         active: true,
         enrolled: "2026-08-14",
         scores: [88, 91, 86],
@@ -68,7 +62,6 @@ export const students = [
         name: "Grace Tan",
         email: "grace.tan@school.edu",
         section: "A",
-        grade: "Grade 9",
         active: true,
         enrolled: "2026-08-14",
         scores: [82, 79, 85],
@@ -78,7 +71,6 @@ export const students = [
         name: "Henry Yu",
         email: "henry.yu@school.edu",
         section: "B",
-        grade: "Grade 12",
         active: true,
         enrolled: "2026-08-16",
         scores: [55, 60, 58],
@@ -88,7 +80,6 @@ export const students = [
         name: "Ira Solis",
         email: "ira.solis@school.edu",
         section: "C",
-        grade: "Grade 12",
         active: false,
         enrolled: "2026-08-19",
         scores: [92, 88, 90],

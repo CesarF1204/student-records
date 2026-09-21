@@ -27,7 +27,7 @@ const findResult = $("#findResult");
 
 const searchInput = $("#studentSearch");
 const sectionFilter = $("#sectionFilter");
-const gradeFilter = $("#gradeFilter");
+const remarksFilter = $("#remarksFilter");
 const statusFilter = $("#statusFilter");
 const resetFiltersBtn = $("#resetFiltersBtn");
 
@@ -80,7 +80,7 @@ const records = students.map((s) => {
 const state = {
     search: "",
     section: "all",
-    grade: "all",
+    remarks: "all",
     status: "all",
     sortKey: "enrolled",
     sortDir: "desc",
@@ -185,12 +185,15 @@ const filteredRecords = () => {
                 r.name.toLowerCase().includes(keyword) ||
                 (r.email || "").toLowerCase().includes(keyword);
             const matchesSection = state.section === "all" || r.section === state.section;
-            const matchesGrade = state.grade === "all" || r.grade === state.grade;
+            const matchesRemarks =
+                state.remarks === "all" ||
+                (state.remarks === "passed" && r.isPassed) ||
+                (state.remarks === "needs" && !r.isPassed);
             const matchesStatus =
                 state.status === "all" ||
                 (state.status === "active" && r.active) ||
                 (state.status === "inactive" && !r.active);
-            return matchesKeyword && matchesSection && matchesGrade && matchesStatus;
+            return matchesKeyword && matchesSection && matchesRemarks && matchesStatus;
         })
         .sort(compareStudents);
 };
@@ -223,12 +226,16 @@ const rowTemplate = (r) => `
             </div>
         </td>
         <td><span class="badge badge-soft badge-soft-primary">${escapeHtml(r.section)}</span></td>
-        <td>${escapeHtml(r.grade)}</td>
         <td>
             <div class="avg-cell ${avgClass(r.average)}" title="${r.isPassed ? "Passing" : "Needs improvement"}">
                 <div class="score-list" aria-label="Scores for ${escapeHtml(r.name)}">${scoresTemplate(r)}</div>
                 <strong>${r.average.toFixed(2)}%</strong>
             </div>
+        </td>
+        <td>
+            <span class="badge badge-soft ${r.isPassed ? "badge-soft-success" : "badge-soft-warning"}">
+                ${r.isPassed ? "Passed" : "Needs Improvement"}
+            </span>
         </td>
         <td>
             <span class="text-nowrap">${formatDate(r.enrolled)}</span>
@@ -257,10 +264,10 @@ const rowTemplate = (r) => `
         </td>
     </tr>`;
 
-const emptyRow = () => `
+const emptyNoResultsRow = () => `
     <tr>
         <td colspan="8">
-            <div class="empty-state">
+            <div class="empty-state" role="status">
                 <i class="bi bi-search" aria-hidden="true"></i>
                 <div class="h6">No student found</div>
                 <p class="mb-0">Try adjusting your filter criteria to see all records.</p>
@@ -268,12 +275,28 @@ const emptyRow = () => `
         </td>
     </tr>`;
 
+const emptyNoDataRow = () => `
+    <tr>
+        <td colspan="8">
+            <div class="empty-state" role="status">
+                <i class="bi bi-mortarboard" aria-hidden="true"></i>
+                <div class="h6">No student records yet</div>
+                <p class="mb-0">Create student record now.</p>
+            </div>
+        </td>
+    </tr>`;
+
+// Backwards-compatible alias (kept in case of external references).
+const emptyRow = emptyNoResultsRow;
+
 const renderTable = (list) => {
     const from = (state.page - 1) * state.pageSize;
     const pageItems = list.slice(from, from + state.pageSize);
 
-    if (pageItems.length === 0) {
-        tableBody.innerHTML = emptyRow();
+    if (records.length === 0) {
+        tableBody.innerHTML = emptyNoDataRow();
+    } else if (pageItems.length === 0) {
+        tableBody.innerHTML = emptyNoResultsRow();
     } else {
         tableBody.innerHTML = pageItems.map(rowTemplate).join("");
         wireRowActions();
@@ -344,9 +367,9 @@ const wireRowActions = () => {
 
 /* ============================ Export CSV ============================= */
 const exportCSV = () => {
-    const header = ["ID", "Name", "Email", "Section", "Grade", "Status", "Enrolled", "Exam1", "Exam2", "Exam3", "Average", "Result"];
+    const header = ["ID", "Name", "Email", "Section", "Status", "Enrolled", "Exam1", "Exam2", "Exam3", "Average", "Result"];
     const rows = records.map((r) =>
-        [r.id, r.name, r.email, r.section, r.grade, r.active ? "Active" : "Inactive", r.enrolled, ...r.scores, r.average, r.isPassed ? "Passed" : "Needs improvement"]
+        [r.id, r.name, r.email, r.section, r.active ? "Active" : "Inactive", r.enrolled, ...r.scores, r.average, r.isPassed ? "Passed" : "Needs improvement"]
     );
     const csv = [header, ...rows]
         .map((row) =>
@@ -418,7 +441,7 @@ const clearFind = () => {
 const resetFilters = () => {
     state.search = "";
     state.section = "all";
-    state.grade = "all";
+    state.remarks = "all";
     state.status = "all";
     state.sortKey = "enrolled";
     state.sortDir = "desc";
@@ -426,7 +449,7 @@ const resetFilters = () => {
 
     searchInput.value = "";
     sectionFilter.value = "all";
-    gradeFilter.value = "all";
+    remarksFilter.value = "all";
     statusFilter.value = "all";
 
     renderAll();
@@ -443,7 +466,6 @@ const formFields = () => ({
     name: $("#nameInput"),
     email: $("#emailInput"),
     section: $("#sectionInput"),
-    grade: $("#gradeInput"),
     enrolled: $("#enrolledInput"),
     active: $("#activeInput"),
     score1: $("#score1"),
@@ -475,7 +497,6 @@ const openStudentModal = (id) => {
         f.name.value = r.name;
         f.email.value = r.email;
         f.section.value = r.section;
-        f.grade.value = r.grade;
         f.enrolled.value = r.enrolled;
         f.active.checked = r.active;
         f.score1.value = r.scores[0] || "";
@@ -488,7 +509,6 @@ const openStudentModal = (id) => {
         f.name.value = "";
         f.email.value = "";
         f.section.value = "A";
-        f.grade.value = "Grade 9";
         f.enrolled.value = new Date().toISOString().slice(0, 10);
         f.active.checked = true;
         f.score1.value = "";
@@ -540,7 +560,6 @@ const saveStudent = () => {
         name: f.name.value.trim(),
         email: f.email.value.trim(),
         section: f.section.value,
-        grade: f.grade.value,
         enrolled: f.enrolled.value,
         active: f.active.checked,
         scores,
@@ -593,7 +612,6 @@ const openViewModal = (id) => {
             <div class="col-12"></div>
             <dt class="col-4 col-sm-3">ID</dt><dd class="col-8 col-sm-9">${r.id}</dd>
             <dt class="col-4 col-sm-3">Section</dt><dd class="col-8 col-sm-9">Section ${escapeHtml(r.section)}</dd>
-            <dt class="col-4 col-sm-3">Grade</dt><dd class="col-8 col-sm-9">${escapeHtml(r.grade)}</dd>
             <dt class="col-4 col-sm-3">Enrolled</dt><dd class="col-8 col-sm-9">${formatDate(r.enrolled)}</dd>
             <dt class="col-4 col-sm-3">Status</dt>
             <dd class="col-8 col-sm-9">
@@ -665,10 +683,10 @@ const wireEvents = () => {
         })
     );
 
-    [sectionFilter, gradeFilter, statusFilter].forEach((select) =>
+    [sectionFilter, remarksFilter, statusFilter].forEach((select) =>
         select.addEventListener("change", () => {
             state.section = sectionFilter.value;
-            state.grade = gradeFilter.value;
+            state.remarks = remarksFilter.value;
             state.status = statusFilter.value;
             state.page = 1;
             renderAll();
