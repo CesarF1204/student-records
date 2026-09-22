@@ -231,7 +231,14 @@ const initBootstrap = () => {
     studentModal = new bootstrap.Modal($("#studentModal"));
     viewModal = new bootstrap.Modal($("#viewStudentModal"));
     deleteModal = new bootstrap.Modal($("#deleteStudentModal"));
+    exportModal = new bootstrap.Modal($("#exportModal"));
     toastEl = new bootstrap.Toast($("#liveToast"));
+
+    // Always clean up the export timer if the modal is dismissed for any reason
+    $("#exportModal").addEventListener("hidden.bs.modal", () => {
+        clearExportTimer();
+        $("#exportBtn").disabled = false;
+    });
     // Tooltips are not auto-initialized in Bootstrap 5
     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
         new bootstrap.Tooltip(el);
@@ -523,6 +530,74 @@ const exportCSV = () => {
     URL.revokeObjectURL(url);
 
     showToast("Export complete", "Student records exported as student-records.csv", "success");
+};
+
+/* ----------------------- Export progress sequence ------------------------ */
+const EXPORT_DURATION_MS = 10000; // ~10 seconds from 1% to 100%
+let exportModal, exportTimer = null;
+
+const setExportProgress = (percent) => {
+    $("#exportProgressBar").style.width = `${percent}%`;
+    $("#exportPercent").textContent = `${percent}%`;
+    $("#exportModal").querySelector(".progress").setAttribute("aria-valuenow", String(percent));
+};
+
+const resetExportModal = () => {
+    setExportProgress(1);
+    $("#exportMessage").classList.remove("d-none");
+    $("#exportComplete").classList.add("d-none");
+    $("#exportError").classList.add("d-none");
+    $("#exportErrorDetail").classList.add("d-none");
+    $("#exportModalFooter").classList.add("d-none");
+};
+
+const clearExportTimer = () => {
+    if (exportTimer) {
+        clearInterval(exportTimer);
+        exportTimer = null;
+    }
+};
+
+const showExportComplete = () => {
+    $("#exportMessage").classList.add("d-none");
+    $("#exportComplete").classList.remove("d-none");
+    $("#exportModalFooter").classList.remove("d-none");
+};
+
+const showExportError = () => {
+    $("#exportMessage").classList.add("d-none");
+    $("#exportError").classList.remove("d-none");
+    $("#exportErrorDetail").classList.remove("d-none");
+    $("#exportModalFooter").classList.remove("d-none");
+};
+
+const startExport = () => {
+    // Prevent duplicate exports / multiple timers while one is in progress
+    if (exportTimer) return;
+
+    $("#exportBtn").disabled = true;
+    resetExportModal();
+    exportModal.show();
+
+    const tickMs = EXPORT_DURATION_MS / 100; // 1% per tick => exactly 100 steps
+    let progress = 1;
+    setExportProgress(progress);
+
+    exportTimer = setInterval(() => {
+        if (progress >= 100) {
+            clearExportTimer();
+            try {
+                exportCSV();
+                showExportComplete();
+            } catch {
+                showExportError();
+            }
+            $("#exportBtn").disabled = false;
+            return;
+        }
+        progress += 1;
+        setExportProgress(progress);
+    }, tickMs);
 };
 
 /* ========================== Find by ID ============================== */
@@ -917,7 +992,8 @@ const wireEvents = () => {
     });
 
     // Export
-    $("#exportBtn").addEventListener("click", exportCSV);
+    $("#exportBtn").addEventListener("click", startExport);
+    $("#exportCloseBtn").addEventListener("click", () => exportModal.hide());
 
     // Add / save
     $("#addStudentBtn").addEventListener("click", () => openStudentModal());

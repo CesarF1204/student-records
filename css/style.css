@@ -1149,6 +1149,61 @@ html, body {
     margin-inline: auto;
 }
 
+/* ============================ Export CSV modal =========================== */
+.export-modal-dialog {
+    max-width: 420px;
+    width: calc(100% - 1.5rem);
+}
+
+.sr-export-message {
+    color: var(--sr-muted);
+    font-size: 0.92rem;
+    margin-bottom: 1rem;
+}
+
+.sr-export-progress {
+    height: 12px;
+    background: var(--sr-muted-soft);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.sr-export-progress .progress-bar {
+    background-color: var(--sr-primary);
+    transition: width 0.15s linear;
+}
+
+.sr-export-percent {
+    color: var(--sr-ink);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.95rem;
+}
+
+.sr-export-status {
+    font-size: 0.95rem;
+}
+
+.sr-export-error-detail {
+    font-size: 0.88rem;
+}
+
+@media (max-width: 480px) {
+    .export-modal-dialog {
+        max-width: calc(100% - 1.2rem);
+        width: auto;
+    }
+
+    .sr-export-message {
+        font-size: 0.85rem;
+    }
+
+    .sr-export-percent,
+    .sr-export-status {
+        font-size: 0.88rem;
+    }
+}
+
 @media (min-width: 576px) and (max-width: 767.98px) {
     .student-cell { gap: 0.4rem; }
     .student-meta .email {

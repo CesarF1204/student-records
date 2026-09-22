@@ -416,6 +416,45 @@
             </div>
         </div>
 
+        <!-- Export CSV progress modal -->
+        <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalTitle" aria-hidden="true"
+            data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered export-modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title h5" id="exportModalTitle">
+                            <i class="bi bi-download me-2" aria-hidden="true"></i>Exporting Student Records
+                        </h2>
+                    </div>
+                    <div class="modal-body">
+                        <p class="sr-export-message" id="exportMessage">
+                            Preparing your student records for download&hellip;
+                        </p>
+                        <div class="progress sr-export-progress" role="progressbar"
+                            aria-labelledby="exportModalTitle" aria-valuemin="0" aria-valuemax="100" aria-valuenow="1">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                id="exportProgressBar" style="width: 1%;"></div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mt-2">
+                            <span class="sr-export-percent" id="exportPercent">1%</span>
+                            <span class="sr-export-status text-success fw-semibold d-none" id="exportComplete">
+                                <i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>Export Complete!
+                            </span>
+                            <span class="sr-export-status text-danger fw-semibold d-none" id="exportError">
+                                <i class="bi bi-x-circle-fill me-1" aria-hidden="true"></i>Export failed
+                            </span>
+                        </div>
+                        <p class="sr-export-error-detail text-danger d-none mb-0 mt-2" id="exportErrorDetail">
+                            Something went wrong while generating the CSV. Please try again.
+                        </p>
+                    </div>
+                    <div class="modal-footer d-none" id="exportModalFooter">
+                        <button type="button" class="btn btn-light" id="exportCloseBtn">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Toast notifications -->
         <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" style="z-index: 1080;">
             <div class="toast sr-toast" id="liveToast" role="status" aria-live="polite">
