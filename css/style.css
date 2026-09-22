@@ -383,6 +383,17 @@ a {
     font-weight: 700;
 }
 
+/* ------- Disabled Student ID field (tooltip wrapper) ------- */
+.sr-id-field {
+    display: block;
+    width: 100%;
+    cursor: not-allowed;
+}
+
+.sr-id-field .form-control:disabled {
+    pointer-events: none; /* let hover/cursor fall through to the wrapper for the tooltip */
+}
+
 /* ============================ Filters ============================ */
 .sr-label {
     color: var(--sr-muted);

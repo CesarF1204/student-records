@@ -232,6 +232,10 @@ const initBootstrap = () => {
     viewModal = new bootstrap.Modal($("#viewStudentModal"));
     deleteModal = new bootstrap.Modal($("#deleteStudentModal"));
     toastEl = new bootstrap.Toast($("#liveToast"));
+    // Tooltips are not auto-initialized in Bootstrap 5
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
+        new bootstrap.Tooltip(el);
+    });
 };
 
 const showToast = (title, message, type = "info") => {
@@ -634,6 +638,32 @@ const refreshAvatarPreview = () => {
     paintAvatarEl($("#avatarPreview"), f.name.value.trim() || "?", f.avatarUrl.value);
 };
 
+/* ------- Enable "Save student" only when form has changes (edit mode) ------- */
+let formSnapshot = null;
+
+const currentFormValues = () => {
+    const f = formFields();
+    return {
+        name: f.name.value,
+        email: f.email.value,
+        avatarUrl: f.avatarUrl.value,
+        section: f.section.value,
+        enrolled: f.enrolled.value,
+        active: f.active.checked,
+        score1: f.score1.value,
+        score2: f.score2.value,
+        score3: f.score3.value,
+    };
+};
+
+const updateSaveButtonState = () => {
+    const btn = $("#saveStudentBtn");
+    if (!btn) return;
+    // Only apply the "no changes" rule when editing an existing record.
+    btn.disabled = Boolean(state.editingId) && formSnapshot !== null
+        && JSON.stringify(currentFormValues()) === JSON.stringify(formSnapshot);
+};
+
 const openStudentModal = (id) => {
     clearValidation();
     const f = formFields();
@@ -669,6 +699,8 @@ const openStudentModal = (id) => {
     }
 
     refreshAvatarPreview();
+    formSnapshot = currentFormValues();
+    updateSaveButtonState();
     studentModal.show();
 };
 
@@ -890,6 +922,10 @@ const wireEvents = () => {
     // Add / save
     $("#addStudentBtn").addEventListener("click", () => openStudentModal());
     $("#saveStudentBtn").addEventListener("click", saveStudent);
+
+    // Re-evaluate Save button state whenever any form field changes
+    $("#studentForm").addEventListener("input", updateSaveButtonState);
+    $("#studentForm").addEventListener("change", updateSaveButtonState);
 
     // Add/Edit modal: Full name (no leading space) + Email (no spaces at all)
     const nameInput = $("#nameInput");
