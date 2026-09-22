@@ -21,6 +21,7 @@ A client-side admin dashboard for managing student records, built with vanilla J
 - **CSV export** — lazy-loaded export module that generates a CSV of all records (`student-records.csv`) with a simulated progress modal driven by a Web Worker (with interval fallback for throttled background tabs).
 - **User avatars** — deterministic color tones derived from the name, initials fallback, optional sanitized http(s) image URLs, and lazy loading.
 - **Skeleton loading state** for the table on initial render.
+- **Filter loading indicator** — a circular spinner overlays the table once the search debounce settles (or a filter/reset change is made), without blocking interaction.
 - **Responsive/mobile UI** — collapsible navbar, responsive table and filters, touch-friendly input sizing, and modal behavior tuned for on-screen keyboards (no iOS auto-zoom).
 
 ## Tech Stack

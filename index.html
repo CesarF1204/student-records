@@ -216,38 +216,48 @@
                             </div>
                         </div>
                         <!-- Table -->
-                        <div class="table-responsive">
-                            <table class="table sr-table align-middle mb-0">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">
-                                            <button type="button" class="sr-sort" data-sort="id" aria-sort="none">
-                                                ID<i class="bi bi-arrow-down-up small ms-1 sort-icon" aria-hidden="true"></i>
-                                            </button>
-                                        </th>
-                                        <th scope="col">
-                                            <button type="button" class="sr-sort" data-sort="name" aria-sort="none">
-                                                Student<i class="bi bi-arrow-down-up small ms-1 sort-icon" aria-hidden="true"></i>
-                                            </button>
-                                        </th>
-                                        <th scope="col">Section</th>
-                                        <th scope="col">
-                                            <button type="button" class="sr-sort" data-sort="average" aria-sort="none">
-                                                Scores / Average<i class="bi bi-arrow-down-up small ms-1 sort-icon" aria-hidden="true"></i>
-                                            </button>
-                                        </th>
-                                        <th scope="col">Remarks</th>
-                                        <th scope="col">
-                                            <button type="button" class="sr-sort" data-sort="enrolled" aria-sort="descending">
-                                                Enrolled Date<i class="bi bi-arrow-down small ms-1 sort-icon" aria-hidden="true"></i>
-                                            </button>
-                                        </th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col" class="text-end"><span class="visually-hidden">Actions</span></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="studentTableBody"><!-- rows rendered by app.js --></tbody>
-                            </table>
+                        <div class="sr-table-wrap">
+                            <div class="table-responsive">
+                                <table class="table sr-table align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">
+                                                <button type="button" class="sr-sort" data-sort="id" aria-sort="none">
+                                                    ID<i class="bi bi-arrow-down-up small ms-1 sort-icon" aria-hidden="true"></i>
+                                                </button>
+                                            </th>
+                                            <th scope="col">
+                                                <button type="button" class="sr-sort" data-sort="name" aria-sort="none">
+                                                    Student<i class="bi bi-arrow-down-up small ms-1 sort-icon" aria-hidden="true"></i>
+                                                </button>
+                                            </th>
+                                            <th scope="col">Section</th>
+                                            <th scope="col">
+                                                <button type="button" class="sr-sort" data-sort="average" aria-sort="none">
+                                                    Scores / Average<i class="bi bi-arrow-down-up small ms-1 sort-icon" aria-hidden="true"></i>
+                                                </button>
+                                            </th>
+                                            <th scope="col">Remarks</th>
+                                            <th scope="col">
+                                                <button type="button" class="sr-sort" data-sort="enrolled" aria-sort="descending">
+                                                    Enrolled Date<i class="bi bi-arrow-down small ms-1 sort-icon" aria-hidden="true"></i>
+                                                </button>
+                                            </th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col" class="text-end"><span class="visually-hidden">Actions</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="studentTableBody"><!-- rows rendered by app.js --></tbody>
+                                </table>
+                            </div>
+
+                            <!-- Circular spinner shown while a debounced search/filter change is processed -->
+                            <div class="sr-table-loading" id="tableFilterLoading" role="status">
+                                <span class="sr-table-loading-badge">
+                                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                    <span class="sr-table-loading-text">Updating results&hellip;</span>
+                                </span>
+                            </div>
                         </div>
 
                         <!-- Pagination -->

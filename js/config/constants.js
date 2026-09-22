@@ -22,3 +22,6 @@ export const ADMIN = {
 
 /** Name of the downloaded CSV file produced by the export feature. */
 export const EXPORT_FILENAME = "student-records.csv";
+
+/** Brief delay before a filter/reset change renders, so the loading animation is visible. */
+export const FILTER_RENDER_DELAY_MS = 350;

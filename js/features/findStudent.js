@@ -2,7 +2,8 @@ import { $, debounce, preventLeadingSpace } from "../utils/dom.js";
 import { escapeHtml } from "../utils/format.js";
 import { avatarHtml } from "../components/avatar.js";
 import { state, findRecord } from "../store/studentStore.js";
-import { renderAll } from "./studentTable.js";
+import { FILTER_RENDER_DELAY_MS } from "../config/constants.js";
+import { renderAll, showTableFilterLoading, hideTableFilterLoading } from "./studentTable.js";
 
 const findStudentInput = $("#findStudentInput");
 const findStudentBtn = $("#findStudentBtn");
@@ -102,9 +103,45 @@ const clearFind = () => {
     setFindStatus("info", "Enter a student ID and press Find (or Enter) to view that record.");
 };
 
+/* Tracks a debounced search plus queued filter renders so the loading
+   indicator stays up until every pending change has been rendered. */
+let searchPending = false;
+let filterTimer = null;
+
 /**
- * DOCU: Resets all filters and sorting to defaults, then re-renders.
- * Last Updated Date: September 22, 2026
+ * DOCU: Hides the table loading indicator only when no search or filter work is pending.
+ * Last Updated Date: September 23, 2026
+ * @function hideFilterLoadingWhenIdle
+ * @returns {void}
+ * @author Cesar
+ */
+const hideFilterLoadingWhenIdle = () => {
+    if (!searchPending && filterTimer === null) hideTableFilterLoading();
+};
+
+/**
+ * DOCU: Shows the loading indicator and renders the queued search/filter/reset
+ * change after a short delay so the circular animation is actually visible
+ * (filtering itself is synchronous). Rapid changes coalesce into a single render.
+ * Last Updated Date: September 23, 2026
+ * @function queueFilterRender
+ * @returns {void}
+ * @author Cesar
+ */
+const queueFilterRender = () => {
+    showTableFilterLoading();
+    clearTimeout(filterTimer);
+    filterTimer = setTimeout(() => {
+        filterTimer = null;
+        renderAll();
+        hideFilterLoadingWhenIdle();
+    }, FILTER_RENDER_DELAY_MS);
+};
+
+/**
+ * DOCU: Resets all filters and sorting to defaults, then re-renders through the
+ * loading queue so the indicator shows while the view is refreshed.
+ * Last Updated Date: September 23, 2026
  * @function resetFilters
  * @returns {void}
  * @author Cesar
@@ -123,7 +160,7 @@ export const resetFilters = () => {
     remarksFilter.value = "all";
     statusFilter.value = "all";
 
-    renderAll();
+    queueFilterRender();
 };
 
 /**
@@ -148,14 +185,27 @@ export const initFindStudent = () => {
 
     preventLeadingSpace(searchInput);
 
-    searchInput.addEventListener(
-        "input",
-        debounce(() => {
-            state.search = searchInput.value.trim();
-            state.page = 1;
-            renderAll();
-        })
-    );
+    /**
+     * DOCU: Once the debounce settles, applies the search keyword and shows the
+     * loading indicator while the filtered results render.
+     * Last Updated Date: September 23, 2026
+     * @function applySearch
+     * @returns {void}
+     * @author Cesar
+     */
+    const applySearch = debounce(() => {
+        state.search = searchInput.value.trim();
+        state.page = 1;
+        searchPending = false;
+        queueFilterRender();
+    });
+
+    /* No loading while typing: the indicator waits for the debounce to settle,
+       then queueFilterRender() shows it while the results render. */
+    searchInput.addEventListener("input", () => {
+        searchPending = true;
+        applySearch();
+    });
 
     [sectionFilter, remarksFilter, statusFilter].forEach((select) =>
         select.addEventListener("change", () => {
@@ -163,7 +213,7 @@ export const initFindStudent = () => {
             state.remarks = remarksFilter.value;
             state.status = statusFilter.value;
             state.page = 1;
-            renderAll();
+            queueFilterRender();
         })
     );
 

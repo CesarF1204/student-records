@@ -12,6 +12,8 @@ const statPassing = $("#statPassing");
 const resultRange = $("#resultRange");
 const paginationEl = $("#pagination");
 const tableBody = $("#studentTableBody");
+const tableEl = tableBody.closest("table");
+const tableFilterLoading = $("#tableFilterLoading");
 
 /* Row actions are injected by app.js to avoid circular imports. */
 let rowActions = { onView: () => {}, onEdit: () => {}, onDelete: () => {} };
@@ -319,6 +321,31 @@ export const showTableLoading = () => {
             </tr>`
         )
         .join("");
+};
+
+/**
+ * DOCU: Shows the circular loading indicator over the table while a debounced
+ * search or filter change is still processing.
+ * Last Updated Date: September 23, 2026
+ * @function showTableFilterLoading
+ * @returns {void}
+ * @author Cesar
+ */
+export const showTableFilterLoading = () => {
+    tableFilterLoading?.classList.add("is-active");
+    tableEl?.setAttribute("aria-busy", "true");
+};
+
+/**
+ * DOCU: Hides the table loading indicator once the filtered results are rendered.
+ * Last Updated Date: September 23, 2026
+ * @function hideTableFilterLoading
+ * @returns {void}
+ * @author Cesar
+ */
+export const hideTableFilterLoading = () => {
+    tableFilterLoading?.classList.remove("is-active");
+    tableEl?.removeAttribute("aria-busy");
 };
 
 /**

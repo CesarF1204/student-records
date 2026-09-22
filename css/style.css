@@ -743,6 +743,63 @@ a {
     to   { background-position: -200% 0; }
 }
 
+/* Filter/search loading state (circular spinner over the table) */
+.sr-table-wrap {
+    position: relative;
+}
+
+.sr-table-loading {
+    position: absolute;
+    inset: 0;
+    z-index: 5; /* above the table rows, below open dropdown menus (z-index 1050) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    /* Translucent veil keeps the current rows visible while processing */
+    background: rgba(255, 255, 255, 0.65);
+    opacity: 0;
+    visibility: hidden;
+    /* pointer-events: none keeps the table fully interactive while loading */
+    pointer-events: none;
+    /* Fade out the moment the filtered results arrive */
+    transition: opacity 0.18s ease, visibility 0s linear 0.18s;
+}
+
+.sr-table-loading.is-active {
+    opacity: 1;
+    visibility: visible;
+    /* Short show-delay keeps very fast searches from flashing the indicator */
+    transition: opacity 0.18s ease 0.12s, visibility 0s linear 0.12s;
+}
+
+.sr-table-loading-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.55rem 1rem;
+    background: var(--sr-surface);
+    border: 1px solid var(--sr-border);
+    border-radius: 999px;
+    box-shadow: 0 8px 20px rgba(28, 39, 51, 0.12);
+}
+
+.sr-table-loading .spinner-border {
+    color: var(--sr-primary);
+}
+
+.sr-table-loading-text {
+    color: var(--sr-muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+@media (max-width: 575.98px) {
+    .sr-table-loading { padding: 0.75rem; }
+    .sr-table-loading-badge { padding: 0.5rem 0.85rem; }
+}
+
 /* ============================ Pagination ============================ */
 .sr-pagination {
     background: var(--sr-surface);
@@ -913,6 +970,10 @@ a {
 
 @media (prefers-reduced-motion: reduce) {
     .skeleton { animation: none; }
+    /* Fade transitions are dropped, but the spinner keeps rotating: its motion
+       is what communicates the loading state itself. */
+    .sr-table-loading,
+    .sr-table-loading.is-active { transition: none; }
     .sr-table tbody > tr > *,
     .action-drop .dropdown-toggle {
         transition: none;
