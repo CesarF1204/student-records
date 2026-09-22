@@ -1152,6 +1152,39 @@ html, body {
 }
 
 @media (max-width: 991.98px) {
-    /* Keep collapsed navbar content from overflowing on small screens */
-    #primaryNav .d-flex { width: 100%; margin-top: 0.5rem; }
+    /* Mobile navbar: row 1 = "Student Records" brand + burger toggler.
+       The burger expands a second row below the brand containing
+       "Dashboard" on the left and the "Admin" block on the right,
+       aligned end to end on one line. */
+    #primaryNav.show,
+    #primaryNav.collapsing {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem 1rem;
+        width: 100%;
+        border-top: 1px solid var(--sr-border);
+        margin-top: 0.5rem;
+        padding-block: 0.5rem 0.75rem;
+    }
+    #primaryNav .navbar-nav {
+        flex-direction: row;
+        align-items: center;
+        margin-right: 0 !important;
+    }
+    .sr-navbar .nav-link {
+        padding-inline: 0.55rem;
+        font-size: 0.9rem;
+    }
+    .sr-user-btn {
+        padding-inline: 0.5rem;
+    }
+    .sr-user-btn .me-2 {
+        margin-right: 0.3rem !important;
+    }
+    .sr-user-btn .ms-2 {
+        margin-left: 0.15rem !important;
+    }
 }
