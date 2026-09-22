@@ -7,6 +7,7 @@ import { paintAvatarEl } from "../components/avatar.js";
 import { getStudentModal } from "../components/modals.js";
 import { showToast } from "../components/toast.js";
 import { records, state, nextId, findRecord } from "../store/studentStore.js";
+import { renderAll } from "./studentTable.js";
 import { isValidEmail, isValidAvatarUrl, isValidScore, withScores } from "../services/studentService.js";
 import { resetFilters } from "./findStudent.js";
 
@@ -74,6 +75,7 @@ export const openStudentModal = (id) => {
         if (!r) return;
         state.editingId = id;
         $("#studentModalTitle").textContent = "Edit student";
+        $("#saveStudentBtn").innerHTML = '<i class="bi bi-check2 me-1" aria-hidden="true"></i>Save student';
         $("#recordId").value = r.id;
         f.name.value = r.name;
         f.email.value = r.email;
@@ -87,6 +89,7 @@ export const openStudentModal = (id) => {
     } else {
         state.editingId = null;
         $("#studentModalTitle").textContent = "Add student";
+        $("#saveStudentBtn").innerHTML = '<i class="bi bi-check2 me-1" aria-hidden="true"></i>Add student';
         $("#recordId").value = nextId();
         f.name.value = "";
         f.email.value = "";
@@ -160,14 +163,14 @@ export const saveStudent = () => {
             records[idx] = withScores({ ...records[idx], ...payload }, payload.scores);
         }
         showToast("Record updated", `${payload.name} was updated.`, "success");
+        renderAll();
     } else {
         records.push(withScores({ ...payload, id: nextId() }, payload.scores));
         showToast("Student added", `${payload.name} was added to the student records.`, "success");
+        resetFilters();
     }
 
     getStudentModal().hide();
-    state.page = 1;
-    resetFilters();
 };
 
 /* =========================== Feature init ============================ */
