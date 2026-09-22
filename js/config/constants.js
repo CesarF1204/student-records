@@ -1,7 +1,3 @@
-/* =========================================================================
-   Student Records — shared constants
-   ========================================================================= */
-
 /** Average score required for a student to count as "Passed". */
 export const PASS_THRESHOLD = 75;
 
@@ -9,7 +5,7 @@ export const PASS_THRESHOLD = 75;
 export const DEFAULT_PAGE_SIZE = 5;
 
 /** Duration of the simulated export progress (1% → 100%). */
-export const EXPORT_DURATION_MS = 10000; // ~10 seconds
+export const EXPORT_DURATION_MS = 10000;
 
 /** Number of tone classes (avatar-tone-0 … avatar-tone-5) in style.css. */
 export const AVATAR_TONES = 6;

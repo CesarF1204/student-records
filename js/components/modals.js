@@ -1,11 +1,14 @@
-/* =========================================================================
-   Bootstrap modal instances (single shared set)
-   ========================================================================= */
 import { $ } from "../utils/dom.js";
 
 let studentModal, viewModal, deleteModal, exportModal;
 
-/** Create all modal instances + one-off global listeners; call at init. */
+/**
+ * DOCU: Creates the shared modal instances and cleanup listener.
+ * Last Updated Date: September 22, 2026
+ * @function initModals
+ * @returns {void}
+ * @author Cesar
+ */
 export const initModals = () => {
     if (!window.bootstrap) return;
     studentModal = new bootstrap.Modal($("#studentModal"));
@@ -13,13 +16,18 @@ export const initModals = () => {
     deleteModal = new bootstrap.Modal($("#deleteStudentModal"));
     exportModal = new bootstrap.Modal($("#exportModal"));
 
-    // Always clean up the export timer if the modal is dismissed for any reason
     $("#exportModal").addEventListener("hidden.bs.modal", () => {
         resetExportState();
     });
 };
 
-/** Tooltips are not auto-initialized in Bootstrap 5. */
+/**
+ * DOCU: Initializes all Bootstrap tooltips.
+ * Last Updated Date: September 22, 2026
+ * @function initTooltips
+ * @returns {void}
+ * @author Cesar
+ */
 export const initTooltips = () => {
     if (!window.bootstrap) return;
     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
@@ -32,12 +40,26 @@ export const getViewModal = () => viewModal;
 export const getDeleteModal = () => deleteModal;
 export const getExportModal = () => exportModal;
 
-/**
- * Cleanup executed whenever the export modal is dismissed for any reason.
- * The export feature registers this callback so its timer can be cleared.
- */
+/* Callback the export feature registers to clean up its timer on dismiss. */
 let exportCleanup = () => {};
+
+/**
+ * DOCU: Registers the callback run when the export modal is dismissed.
+ * Last Updated Date: September 22, 2026
+ * @function setExportCleanup
+ * @param {Function} fn - Cleanup callback to run on dismiss
+ * @returns {void}
+ * @author Cesar
+ */
 export const setExportCleanup = (fn) => {
     exportCleanup = typeof fn === "function" ? fn : () => {};
 };
+
+/**
+ * DOCU: Runs the registered export cleanup callback.
+ * Last Updated Date: September 22, 2026
+ * @function resetExportState
+ * @returns {void}
+ * @author Cesar
+ */
 const resetExportState = () => exportCleanup();

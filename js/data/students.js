@@ -1,11 +1,5 @@
-// Master student records used by the dashboard.
-// Each record keeps the original id, name, section and scores from the
-// web app and adds the fields. an admin needs day-to-day: contact
-// email, enrollment "active" flag and enrollment date.
-//
-// `avatarUrl` is optional: when set to an http(s) image URL the avatar
-// system shows that photo (cropped/centered); when empty the UI shows a
-// polished deterministic initials avatar — never a random photo.
+/** Master student records used by the dashboard. `avatarUrl` is optional:
+when set, the avatar system shows that photo; otherwise initials are used. */
 export const students = [
     {
         id: 101,

@@ -1,7 +1,3 @@
-/* =========================================================================
-   Add / Edit student form feature
-   Form fields, validation, avatar preview, modal lifecycle and saving.
-   ========================================================================= */
 import { $, preventLeadingSpace, preventAnySpace, trimOnBlur } from "../utils/dom.js";
 import { paintAvatarEl } from "../components/avatar.js";
 import { getStudentModal } from "../components/modals.js";
@@ -11,6 +7,13 @@ import { renderAll } from "./studentTable.js";
 import { isValidEmail, isValidAvatarUrl, isValidScore, withScores } from "../services/studentService.js";
 import { resetFilters } from "./findStudent.js";
 
+/**
+ * DOCU: Returns references to all form fields.
+ * Last Updated Date: September 22, 2026
+ * @function formFields
+ * @returns {Object} Map of form field elements
+ * @author Cesar
+ */
 const formFields = () => ({
     name: $("#nameInput"),
     email: $("#emailInput"),
@@ -23,26 +26,55 @@ const formFields = () => ({
     score3: $("#score3"),
 });
 
+/**
+ * DOCU: Clears all validation styling on the form.
+ * Last Updated Date: September 22, 2026
+ * @function clearValidation
+ * @returns {void}
+ * @author Cesar
+ */
 const clearValidation = () => {
     document.querySelectorAll("#studentForm .is-invalid, #studentForm .is-valid").forEach((el) => {
         el.classList.remove("is-invalid", "is-valid");
     });
 };
 
+/**
+ * DOCU: Marks a field as valid or invalid.
+ * Last Updated Date: September 22, 2026
+ * @function markInvalid
+ * @param {HTMLElement} el - The field to mark
+ * @param {boolean} valid - Whether the field is valid
+ * @returns {void}
+ * @author Cesar
+ */
 const markInvalid = (el, valid) => {
     el.classList.remove("is-valid", "is-invalid");
     el.classList.add(valid ? "is-valid" : "is-invalid");
 };
 
+/**
+ * DOCU: Refreshes the avatar preview from the current form values.
+ * Last Updated Date: September 22, 2026
+ * @function refreshAvatarPreview
+ * @returns {void}
+ * @author Cesar
+ */
 const refreshAvatarPreview = () => {
     const f = formFields();
     if (!f.avatarUrl) return;
     paintAvatarEl($("#avatarPreview"), f.name.value.trim() || "?", f.avatarUrl.value);
 };
 
-/* ------- Enable "Save student" only when form has changes (edit mode) ------- */
 let formSnapshot = null;
 
+/**
+ * DOCU: Collects the current values of all form fields.
+ * Last Updated Date: September 22, 2026
+ * @function currentFormValues
+ * @returns {Object} Current form field values
+ * @author Cesar
+ */
 const currentFormValues = () => {
     const f = formFields();
     return {
@@ -58,14 +90,28 @@ const currentFormValues = () => {
     };
 };
 
+/**
+ * DOCU: Disables Save in edit mode when nothing has changed.
+ * Last Updated Date: September 22, 2026
+ * @function updateSaveButtonState
+ * @returns {void}
+ * @author Cesar
+ */
 const updateSaveButtonState = () => {
     const btn = $("#saveStudentBtn");
     if (!btn) return;
-    // Only apply the "no changes" rule when editing an existing record.
     btn.disabled = Boolean(state.editingId) && formSnapshot !== null
         && JSON.stringify(currentFormValues()) === JSON.stringify(formSnapshot);
 };
 
+/**
+ * DOCU: Opens the add/edit student modal for a given record.
+ * Last Updated Date: September 22, 2026
+ * @function openStudentModal
+ * @param {number} id - Student id to edit; omit to add a new student
+ * @returns {void}
+ * @author Cesar
+ */
 export const openStudentModal = (id) => {
     clearValidation();
     const f = formFields();
@@ -108,6 +154,13 @@ export const openStudentModal = (id) => {
     getStudentModal().show();
 };
 
+/**
+ * DOCU: Validates all form fields and marks invalid ones.
+ * Last Updated Date: September 22, 2026
+ * @function validateForm
+ * @returns {Object} Object with `valid` flag and parsed `scores` array
+ * @author Cesar
+ */
 const validateForm = () => {
     const f = formFields();
     let valid = true;
@@ -139,6 +192,13 @@ const validateForm = () => {
     return { valid, scores };
 };
 
+/**
+ * DOCU: Validates and saves a new or edited student.
+ * Last Updated Date: September 22, 2026
+ * @function saveStudent
+ * @returns {void}
+ * @author Cesar
+ */
 export const saveStudent = () => {
     const f = formFields();
     const { valid, scores } = validateForm();
@@ -173,17 +233,20 @@ export const saveStudent = () => {
     getStudentModal().hide();
 };
 
-/* =========================== Feature init ============================ */
+/**
+ * DOCU: Wires the student form controls and input constraints.
+ * Last Updated Date: September 22, 2026
+ * @function initStudentForm
+ * @returns {void}
+ * @author Cesar
+ */
 export const initStudentForm = () => {
-    // Add / save
     $("#addStudentBtn").addEventListener("click", () => openStudentModal());
     $("#saveStudentBtn").addEventListener("click", saveStudent);
 
-    // Re-evaluate Save button state whenever any form field changes
     $("#studentForm").addEventListener("input", updateSaveButtonState);
     $("#studentForm").addEventListener("change", updateSaveButtonState);
 
-    // Add/Edit modal: Full name (no leading space) + Email (no spaces at all)
     const nameInput = $("#nameInput");
     if (nameInput) {
         preventLeadingSpace(nameInput);
@@ -201,7 +264,6 @@ export const initStudentForm = () => {
         trimOnBlur(avatarInput);
         avatarInput.addEventListener("input", () => {
             refreshAvatarPreview();
-            // Live validation feel without blocking typing a URL.
             if (avatarInput.value.trim() === "" || isValidAvatarUrl(avatarInput.value)) {
                 avatarInput.classList.remove("is-invalid");
             }

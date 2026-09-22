@@ -1,15 +1,9 @@
-/* =========================================================================
-   Student table feature
-   Summary stats, row templates, empty states, pagination and the
-   sorting/page-size controls around the table.
-   ========================================================================= */
 import { PASS_THRESHOLD } from "../config/constants.js";
 import { $ } from "../utils/dom.js";
 import { escapeHtml, formatDate } from "../utils/format.js";
 import { avatarHtml } from "../components/avatar.js";
 import { records, state, filteredRecords, initialSortDirFor } from "../store/studentStore.js";
 
-/* ------------------------- DOM element references ------------------------ */
 const statShown = $("#statShown");
 const trendShown = $("#trendShown");
 const statAvg = $("#statAvg");
@@ -19,11 +13,16 @@ const resultRange = $("#resultRange");
 const paginationEl = $("#pagination");
 const tableBody = $("#studentTableBody");
 
-/* Row actions are injected by app.js so this module stays decoupled
-   from the modal features (avoids circular imports). */
+/* Row actions are injected by app.js to avoid circular imports. */
 let rowActions = { onView: () => {}, onEdit: () => {}, onDelete: () => {} };
 
-/* ============================ Summary stats ============================ */
+/**
+ * DOCU: Renders the summary stat cards above the table.
+ * Last Updated Date: September 22, 2026
+ * @function renderStats
+ * @returns {void} 
+ * @author Cesar
+ */
 export const renderStats = () => {
     const total = records.length;
     const shown = filteredRecords().length;
@@ -37,7 +36,13 @@ export const renderStats = () => {
     trendShown.innerHTML = `<span class="text-muted">${shown} of ${total} total</span>`;
 };
 
-/* ========================== Sorting header UI ========================== */
+/**
+ * DOCU: Updates the sort direction icons and aria-sort attributes.
+ * Last Updated Date: September 22, 2026
+ * @function updateSortHeaders
+ * @returns {void} 
+ * @author Cesar
+ */
 export const updateSortHeaders = () => {
     document.querySelectorAll(".sr-sort").forEach((btn) => {
         const key = btn.dataset.sort;
@@ -54,11 +59,34 @@ export const updateSortHeaders = () => {
     });
 };
 
-/* ========================== Table rendering =========================== */
+/**
+ * DOCU: Returns the CSS class for an average score.
+ * Last Updated Date: September 22, 2026
+ * @function avgClass
+ * @param {number} average - The student average score
+ * @returns {string} CSS class for the average
+ * @author Cesar
+ */
 const avgClass = (average) => (average >= PASS_THRESHOLD ? "avg-good" : "avg-bad");
 
+/**
+ * DOCU: Returns the CSS class for a single score.
+ * Last Updated Date: September 22, 2026
+ * @function scoreClass
+ * @param {number} score - A single exam score
+ * @returns {string} CSS class for the score
+ * @author Cesar
+ */
 const scoreClass = (score) => (score >= PASS_THRESHOLD ? "score-pass" : "score-fail");
 
+/**
+ * DOCU: Builds the score boxes markup for a student row.
+ * Last Updated Date: September 22, 2026
+ * @function scoresTemplate
+ * @param {Object} r - The student record
+ * @returns {string} Score boxes HTML markup
+ * @author Cesar
+ */
 const scoresTemplate = (r) =>
     r.scores
         .map(
@@ -69,6 +97,14 @@ const scoresTemplate = (r) =>
         )
         .join("");
 
+/**
+ * DOCU: Builds the HTML for one student row.
+ * Last Updated Date: September 22, 2026
+ * @function rowTemplate
+ * @param {Object} r - The student record
+ * @returns {string} Table row HTML markup
+ * @author Cesar
+ */
 const rowTemplate = (r) => `
     <tr>
         <td class="sr-id-cell" data-label="ID">#${r.id}</td>
@@ -121,6 +157,13 @@ const rowTemplate = (r) => `
         </td>
     </tr>`;
 
+/**
+ * DOCU: Builds the empty-state row shown when filters match nothing.
+ * Last Updated Date: September 22, 2026
+ * @function emptyNoResultsRow
+ * @returns {string} Empty-state table row HTML
+ * @author Cesar
+ */
 const emptyNoResultsRow = () => `
     <tr>
         <td colspan="8">
@@ -132,6 +175,13 @@ const emptyNoResultsRow = () => `
         </td>
     </tr>`;
 
+/**
+ * DOCU: Builds the empty-state row shown when there are no records.
+ * Last Updated Date: September 22, 2026
+ * @function emptyNoDataRow
+ * @returns {string} Empty-state table row HTML
+ * @author Cesar
+ */
 const emptyNoDataRow = () => `
     <tr>
         <td colspan="8">
@@ -143,6 +193,14 @@ const emptyNoDataRow = () => `
         </td>
     </tr>`;
 
+/**
+ * DOCU: Renders the current page of student rows.
+ * Last Updated Date: September 22, 2026
+ * @function renderTable
+ * @param {Array} list - Filtered student records to render
+ * @returns {void}
+ * @author Cesar
+ */
 export const renderTable = (list) => {
     const from = (state.page - 1) * state.pageSize;
     const pageItems = list.slice(from, from + state.pageSize);
@@ -159,12 +217,19 @@ export const renderTable = (list) => {
     const shown = list.length === 0 ? 0 : from + pageItems.length;
     resultRange.textContent = list.length === 0
         ? "0 of " + records.length + " records"
-        : `Showing ${from + 1} – ${shown} of ${records.length} records`;
+        : `Showing ${from + 1} â€“ ${shown} of ${records.length} records`;
 
     renderPagination(list.length);
 };
 
-/* =========================== Pagination =========================== */
+/**
+ * DOCU: Renders the pagination controls for the current page count.
+ * Last Updated Date: September 22, 2026
+ * @function renderPagination
+ * @param {number} total - Total number of filtered records
+ * @returns {void} 
+ * @author Cesar
+ */
 export const renderPagination = (total) => {
     const pages = Math.max(1, Math.ceil(total / state.pageSize));
     if (state.page > pages) state.page = pages;
@@ -206,7 +271,13 @@ export const renderPagination = (total) => {
     );
 };
 
-/* ======================= Row action wiring ========================= */
+/**
+ * DOCU: Attaches click handlers to each row action button.
+ * Last Updated Date: September 22, 2026
+ * @function wireRowActions
+ * @returns {void} 
+ * @author Cesar
+ */
 const wireRowActions = () => {
     tableBody.querySelectorAll("[data-view]").forEach((btn) =>
         btn.addEventListener("click", () => rowActions.onView(Number(btn.dataset.view)))
@@ -219,14 +290,26 @@ const wireRowActions = () => {
     );
 };
 
-/* ======================= Refresh everything ========================= */
+/**
+ * DOCU: Refreshes the stats, sort headers and table.
+ * Last Updated Date: September 22, 2026
+ * @function renderAll
+ * @returns {void} 
+ * @author Cesar
+ */
 export const renderAll = () => {
     renderStats();
     updateSortHeaders();
     renderTable(filteredRecords());
 };
 
-/* ====================== Loading state simulation ===================== */
+/**
+ * DOCU: Shows skeleton rows while the table is loading.
+ * Last Updated Date: September 22, 2026
+ * @function showTableLoading
+ * @returns {void} 
+ * @author Cesar
+ */
 export const showTableLoading = () => {
     tableBody.innerHTML = Array.from({ length: 6 })
         .map(
@@ -238,15 +321,17 @@ export const showTableLoading = () => {
         .join("");
 };
 
-/* =========================== Feature init ============================ */
 /**
- * Wire the table controls (sorting, rows-per-page) and register the
- * row-action handlers (view/edit/delete) provided by the app.
+ * DOCU: Wires the table controls and registers row-action handlers.
+ * Last Updated Date: September 22, 2026
+ * @function initStudentTable
+ * @param {Object} handlers - View/edit/delete handlers from app.js
+ * @returns {void}
+ * @author Cesar
  */
 export const initStudentTable = (handlers = {}) => {
     rowActions = { ...rowActions, ...handlers };
 
-    // Sorting
     document.querySelectorAll(".sr-sort").forEach((btn) =>
         btn.addEventListener("click", () => {
             const key = btn.dataset.sort;
@@ -261,7 +346,6 @@ export const initStudentTable = (handlers = {}) => {
         })
     );
 
-    // Rows per page
     $("#pageSizeSelect").addEventListener("change", () => {
         state.pageSize = Number($("#pageSizeSelect").value);
         state.page = 1;

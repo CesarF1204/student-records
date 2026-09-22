@@ -1,6 +1,3 @@
-/* =========================================================================
-   View / Delete student modals feature
-   ========================================================================= */
 import { $ } from "../utils/dom.js";
 import { escapeHtml, formatDate } from "../utils/format.js";
 import { avatarHtml } from "../components/avatar.js";
@@ -10,7 +7,14 @@ import { records, state, findRecord, filteredRecords } from "../store/studentSto
 import { renderAll } from "./studentTable.js";
 import { openStudentModal } from "./studentForm.js";
 
-/* ========================== View student ============================= */
+/**
+ * DOCU: Opens the view modal with a student's details.
+ * Last Updated Date: September 22, 2026
+ * @function openViewModal
+ * @param {number} id - Student id to view
+ * @returns {void}
+ * @author Cesar
+ */
 export const openViewModal = (id) => {
     const r = findRecord(id);
     if (!r) return;
@@ -52,7 +56,14 @@ export const openViewModal = (id) => {
     getViewModal().show();
 };
 
-/* ========================= Delete student ============================ */
+/**
+ * DOCU: Opens the delete confirmation modal for a student.
+ * Last Updated Date: September 22, 2026
+ * @function openDeleteModal
+ * @param {number} id - Student id pending deletion
+ * @returns {void}
+ * @author Cesar
+ */
 export const openDeleteModal = (id) => {
     const r = findRecord(id);
     if (!r) return;
@@ -68,6 +79,13 @@ export const openDeleteModal = (id) => {
     getDeleteModal().show();
 };
 
+/**
+ * DOCU: Deletes the pending student and refreshes the table.
+ * Last Updated Date: September 22, 2026
+ * @function confirmDelete
+ * @returns {void}
+ * @author Cesar
+ */
 const confirmDelete = () => {
     if (state.deleteId === null) return;
     const idx = records.findIndex((r) => r.id === state.deleteId);
@@ -82,14 +100,18 @@ const confirmDelete = () => {
     getDeleteModal().hide();
 };
 
-/* =========================== Feature init ============================ */
+/**
+ * DOCU: Wires the view/edit and delete modal buttons.
+ * Last Updated Date: September 22, 2026
+ * @function initStudentModals
+ * @returns {void}
+ * @author Cesar
+ */
 export const initStudentModals = () => {
-    // View -> edit
     $("#viewEditBtn").addEventListener("click", () => {
         getViewModal().hide();
         setTimeout(() => openStudentModal(state.viewId), 160);
     });
 
-    // Delete
     $("#confirmDeleteBtn").addEventListener("click", confirmDelete);
 };

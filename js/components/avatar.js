@@ -1,14 +1,16 @@
-/* =========================================================================
-   Avatar — one reusable avatar system
-   Optional image URL if available, otherwise a polished deterministic
-   initials fallback (no random photos, so no false identity).
-   `size` maps to .avatar-xs/sm/md/lg.
-   ========================================================================= */
 import { AVATAR_TONES } from "../config/constants.js";
 import { escapeHtml, initials } from "../utils/format.js";
 
 const AVATAR_TONE_CLASSES = Array.from({ length: AVATAR_TONES }, (_, i) => `avatar-tone-${i}`);
 
+/**
+ * DOCU: Picks a deterministic avatar tone class from the name.
+ * Last Updated Date: September 22, 2026
+ * @function avatarTone
+ * @param {string} name - The name to derive the tone from
+ * @returns {number} Tone index between 0 and AVATAR_TONES - 1
+ * @author Cesar
+ */
 export const avatarTone = (name) => {
     const text = String(name ?? "");
     let hash = 0;
@@ -18,15 +20,32 @@ export const avatarTone = (name) => {
     return hash % AVATAR_TONES;
 };
 
+/**
+ * DOCU: Allows only http(s) URLs and relative paths for avatars.
+ * Last Updated Date: September 22, 2026
+ * @function sanitizeAvatarUrl
+ * @param {string} url - The avatar URL to validate
+ * @returns {string} The cleaned URL, or an empty string if not allowed
+ * @author Cesar
+ */
 export const sanitizeAvatarUrl = (url) => {
     const clean = String(url ?? "").trim();
     if (!clean) return "";
-    // Only allow http(s) URLs (and relative paths) so no javascript:/data: URIs.
     if (/^(https?:\/\/|\.\.?\/|\/)/i.test(clean)) return clean;
     return "";
 };
 
-/** Full <span class="avatar …"> markup for template strings. */
+/**
+ * DOCU: Builds the avatar markup for template strings.
+ * Last Updated Date: September 22, 2026
+ * @function avatarHtml
+ * @param {string} name - Student name shown as fallback initials
+ * @param {string} avatarUrl - Optional avatar image URL
+ * @param {string} size - Avatar size (xs/sm/md/lg)
+ * @param {string} extraClass - Optional extra CSS classes
+ * @returns {string} Avatar HTML markup
+ * @author Cesar
+ */
 export const avatarHtml = (name, avatarUrl, size = "md", extraClass = "") => {
     const safeName = escapeHtml(String(name ?? "User"));
     const tone = avatarTone(name);
@@ -38,7 +57,16 @@ export const avatarHtml = (name, avatarUrl, size = "md", extraClass = "") => {
     return `<span class="${cls}" role="img" aria-label="${safeName} avatar">${img}${escapeHtml(initials(name))}</span>`;
 };
 
-/** Paint an existing avatar element in place (keeps DOM node identity). */
+/**
+ * DOCU: Updates an existing avatar element in place.
+ * Last Updated Date: September 22, 2026
+ * @function paintAvatarEl
+ * @param {HTMLElement} el - The avatar element to update
+ * @param {string} name - Student name for the initials fallback
+ * @param {string} avatarUrl - Optional avatar image URL
+ * @returns {void}
+ * @author Cesar
+ */
 export const paintAvatarEl = (el, name, avatarUrl) => {
     if (!el) return;
     const src = sanitizeAvatarUrl(avatarUrl);
@@ -53,7 +81,6 @@ export const paintAvatarEl = (el, name, avatarUrl) => {
         img.addEventListener("error", () => img.remove());
         el.prepend(img);
     }
-    // Keep the initials text node in sync.
     Array.from(el.childNodes).forEach((node) => {
         if (node.nodeType === Node.TEXT_NODE) node.remove();
     });

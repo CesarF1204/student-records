@@ -1,13 +1,9 @@
-/* =========================================================================
-   Find by ID + table filters feature
-   ========================================================================= */
 import { $, debounce, preventLeadingSpace } from "../utils/dom.js";
 import { escapeHtml } from "../utils/format.js";
 import { avatarHtml } from "../components/avatar.js";
 import { state, findRecord } from "../store/studentStore.js";
 import { renderAll } from "./studentTable.js";
 
-/* ------------------------- DOM element references ------------------------ */
 const findStudentInput = $("#findStudentInput");
 const findStudentBtn = $("#findStudentBtn");
 const clearFindBtn = $("#clearFindBtn");
@@ -20,21 +16,51 @@ const remarksFilter = $("#remarksFilter");
 const statusFilter = $("#statusFilter");
 const resetFiltersBtn = $("#resetFiltersBtn");
 
-/* ========================== Find by ID ============================== */
+/**
+ * DOCU: Shows a status message next to the find controls.
+ * Last Updated Date: September 22, 2026
+ * @function setFindStatus
+ * @param {string} type - Status type (ok/err/info)
+ * @param {string} message - Message to display
+ * @returns {void}
+ * @author Cesar
+ */
 const setFindStatus = (type, message) => {
     findStatus.dataset.type = type || "";
     const icon = type === "ok" ? "bi-check2-circle" : type === "err" ? "bi-x-circle" : "bi-info-circle";
     findStatus.innerHTML = `<i class="bi ${icon} me-1" aria-hidden="true"></i>${escapeHtml(message)}`;
 };
 
+/**
+ * DOCU: Hides the find result panel.
+ * Last Updated Date: September 22, 2026
+ * @function hideFindResult
+ * @returns {void}
+ * @author Cesar
+ */
 const hideFindResult = () => {
     findResult.innerHTML = "";
     findResult.hidden = true;
 };
 
+/**
+ * DOCU: Builds the HTML for a found student record.
+ * Last Updated Date: September 22, 2026
+ * @function findResultText
+ * @param {Object} r - The found student record
+ * @returns {string} Student result HTML markup
+ * @author Cesar
+ */
 const findResultText = (r) =>
     `${avatarHtml(r.name, r.avatarUrl, "xs")}<span class="sr-find-text">${escapeHtml(r.name)} | Section ${escapeHtml(r.section)} | Average: ${r.average.toFixed(2)} | ${r.isPassed ? "Passed" : "Needs Improvement"}</span>`;
 
+/**
+ * DOCU: Looks up a student by ID and shows the result or an error.
+ * Last Updated Date: September 22, 2026
+ * @function applyFind
+ * @returns {void}
+ * @author Cesar
+ */
 const applyFind = () => {
     const raw = findStudentInput.value.trim();
     const id = raw === "" ? null : Number(raw);
@@ -63,14 +89,26 @@ const applyFind = () => {
     }
 };
 
+/**
+ * DOCU: Clears the find input, result and status message.
+ * Last Updated Date: September 22, 2026
+ * @function clearFind
+ * @returns {void}
+ * @author Cesar
+ */
 const clearFind = () => {
     findStudentInput.value = "";
     hideFindResult();
     setFindStatus("info", "Enter a student ID and press Find (or Enter) to view that record.");
 };
 
-/* ============================ Reset filters ========================== */
-/** Reset every filter/sort to its default and re-render the table. */
+/**
+ * DOCU: Resets all filters and sorting to defaults, then re-renders.
+ * Last Updated Date: September 22, 2026
+ * @function resetFilters
+ * @returns {void}
+ * @author Cesar
+ */
 export const resetFilters = () => {
     state.search = "";
     state.section = "all";
@@ -88,9 +126,14 @@ export const resetFilters = () => {
     renderAll();
 };
 
-/* =========================== Feature init ============================ */
+/**
+ * DOCU: Wires the find-by-ID and table filter controls.
+ * Last Updated Date: September 22, 2026
+ * @function initFindStudent
+ * @returns {void}
+ * @author Cesar
+ */
 export const initFindStudent = () => {
-    // Find by ID
     findStudentBtn.addEventListener("click", applyFind);
     clearFindBtn.addEventListener("click", clearFind);
     findStudentInput.addEventListener("keydown", (e) => {
@@ -103,7 +146,6 @@ export const initFindStudent = () => {
         if (findStudentInput.value.trim() === "") clearFind();
     }, 250));
 
-    // Filters — never allow leading spaces in the search field
     preventLeadingSpace(searchInput);
 
     searchInput.addEventListener(

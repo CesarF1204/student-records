@@ -1,9 +1,3 @@
-/* =========================================================================
-   Student Records Dashboard — application entry point
-   App.js stays focused on composition + initialization:
-   global providers (Bootstrap modals/toasts), page wiring and lazy loading
-   of infrequently used features. All logic lives in dedicated modules.
-   ========================================================================= */
 import { $ } from "./utils/dom.js";
 import { formatToday } from "./utils/format.js";
 import { ADMIN } from "./config/constants.js";
@@ -15,7 +9,13 @@ import { initFindStudent } from "./features/findStudent.js";
 import { initStudentForm, openStudentModal } from "./features/studentForm.js";
 import { initStudentModals, openDeleteModal, openViewModal } from "./features/studentModals.js";
 
-/* ------------------------ Header identity + clock ------------------------ */
+/**
+ * DOCU: Renders the admin avatar and today's date in the header/footer.
+ * Last Updated Date: September 22, 2026
+ * @function renderHeader
+ * @returns {void}
+ * @author Cesar
+ */
 const renderHeader = () => {
     paintAvatarEl($("#adminAvatar"), ADMIN.name, ADMIN.avatarUrl);
     paintAvatarEl($("#adminAvatarMenu"), ADMIN.name, ADMIN.avatarUrl);
@@ -27,23 +27,32 @@ const renderHeader = () => {
     }
 };
 
-/* --------------------- Export (lazy / code splitting) ---------------------
-   The export service (CSV generation + progress sequence) is only downloaded
-   the first time the user actually exports. */
+/**
+ * DOCU: Lazily loads and starts the CSV export on demand.
+ * Last Updated Date: September 22, 2026
+ * @function wireExport
+ * @returns {void}
+ * @author Cesar
+ */
 const wireExport = () => {
     $("#exportBtn").addEventListener("click", async () => {
         try {
             const { startExport } = await import("./services/exportService.js");
             startExport();
         } catch (err) {
-            // Chunk failed to load (e.g. offline) — keep the button usable.
             console.error("Failed to load the export module:", err);
         }
     });
     $("#exportCloseBtn").addEventListener("click", () => getExportModal()?.hide());
 };
 
-/* ================================= Init ================================= */
+/**
+ * DOCU: Initializes all features and performs the first table render.
+ * Last Updated Date: September 22, 2026
+ * @function init
+ * @returns {void}
+ * @author Cesar
+ */
 const init = () => {
     initModals();
     initToast();
@@ -63,7 +72,6 @@ const init = () => {
 
     showTableLoading();
 
-    // Brief simulated load, then render.
     setTimeout(() => {
         renderAll();
     }, 450);
