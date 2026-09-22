@@ -40,7 +40,8 @@ const exportCSV = () => {
 };
 
 /* ----------------------- Export progress sequence ------------------------ */
-let exportTimer = null;
+let exportTimer = null; // Web Worker driving the progress ticks
+let safetyTimer = null;
 let cleanupRegistered = false;
 
 const setExportProgress = (percent) => {
@@ -60,8 +61,12 @@ const resetExportModal = () => {
 
 const clearExportTimer = () => {
     if (exportTimer) {
-        clearInterval(exportTimer);
+        exportTimer.terminate(); // worker instance; terminate also cancels its ticks
         exportTimer = null;
+    }
+    if (safetyTimer) {
+        clearTimeout(safetyTimer);
+        safetyTimer = null;
     }
 };
 
@@ -99,22 +104,52 @@ export const startExport = () => {
     getExportModal().show();
 
     const tickMs = EXPORT_DURATION_MS / 100; // 1% per tick => exactly 100 steps
-    let progress = 1;
-    setExportProgress(progress);
+    const startedAt = Date.now();
+    setExportProgress(1);
 
-    exportTimer = setInterval(() => {
-        if (progress >= 100) {
-            clearExportTimer();
-            try {
-                exportCSV();
-                showExportComplete();
-            } catch {
-                showExportError();
-            }
-            $("#exportBtn").disabled = false;
-            return;
+    // Use a Web Worker to drive the ticks: browsers heavily throttle timers on
+    // inactive/background tabs (down to ~1 per minute), which would stall the
+    // progress bar when the tab isn't focused. Workers are not throttled.
+    // Progress is derived from real elapsed time, so it stays accurate even if
+    // individual ticks are delayed, and the export always completes on time.
+    let worker = null;
+    let finished = false;
+    const finish = () => {
+        if (finished) return;
+        finished = true;
+        clearExportTimer();
+        try {
+            exportCSV();
+            showExportComplete();
+        } catch {
+            showExportError();
         }
-        progress += 1;
-        setExportProgress(progress);
-    }, tickMs);
+        $("#exportBtn").disabled = false;
+    };
+
+    const workerCode = `setInterval(() => postMessage(0), ${Math.round(tickMs)});`;
+    try {
+        worker = new Worker(URL.createObjectURL(new Blob([workerCode], { type: "application/javascript" })));
+        // Treat the worker as the active export timer so the duplicate-export guard
+        // and the cleanup-on-dismiss path keep working exactly as before.
+        exportTimer = worker;
+
+        worker.onmessage = () => {
+            const percent = Math.min(100, 1 + Math.floor((Date.now() - startedAt) / tickMs));
+            setExportProgress(percent);
+            if (percent >= 100) finish();
+        };
+    } catch {
+        // Fallback: main-thread interval, but still time-based so progress and
+        // completion stay correct even if ticks are throttled in a background tab.
+        exportTimer = setInterval(() => {
+            const percent = Math.min(100, 1 + Math.floor((Date.now() - startedAt) / tickMs));
+            setExportProgress(percent);
+            if (percent >= 100) finish();
+        }, Math.round(tickMs));
+        // clearInterval path if dismissed before the worker-less export ends
+        exportTimer.terminate = () => clearInterval(exportTimer);
+    }
+    // Safety net: even if the timer somehow fails to tick, complete on time.
+    safetyTimer = setTimeout(finish, EXPORT_DURATION_MS + tickMs);
 };
