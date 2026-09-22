@@ -29,6 +29,13 @@
     --sr-font-body: "Public Sans", "Segoe UI", system-ui, sans-serif;
     --sr-radius: 10px;
 
+    /* Form controls. iOS Safari auto-zooms the page when a text control
+       whose computed font-size is below 16px is focused, so this size is
+       raised to 1rem (16px) on touch devices / small screens (see the
+       "Mobile & touch form behaviour" media query at the end of this file).
+       Desktop keeps the compact 0.95rem. */
+    --sr-input-font-size: 0.95rem;
+
     /* Re-map Bootstrap's primary so buttons/links follow the brand */
     --bs-body-font-family: var(--sr-font-body);
     --bs-primary: #2f5b8e;
@@ -411,7 +418,28 @@ a {
 .form-control, .form-select {
     border: 1px solid var(--sr-border);
     border-radius: 8px;
-    font-size: 0.95rem;
+    font-size: var(--sr-input-font-size);
+    line-height: 1.5;
+}
+
+.form-select {
+    font-size: 0.85rem !important;
+}
+
+/* Keep every compact variant on the same responsive size so no control can
+   ever drop below 16px on touch devices (iOS auto-zoom threshold). These
+   re-assertions are needed because Bootstrap's .input-group-sm > .form-control
+   / .form-select-sm rules would otherwise apply their own smaller sizes
+   (.875rem) with higher specificity. */
+.form-control-sm, .form-select-sm {
+    font-size: var(--sr-input-font-size);
+}
+
+.input-group-sm > .form-control,
+.input-group-sm > .form-select,
+.input-group-sm > .input-group-text,
+.input-group-sm > .btn {
+    font-size: var(--sr-input-font-size);
 }
 
 .form-control:focus, .form-select:focus {
@@ -1252,5 +1280,59 @@ html, body {
     }
     .sr-user-btn .ms-2 {
         margin-left: 0.15rem !important;
+    }
+}
+
+/* =========================================================================
+   Mobile & touch form behaviour
+   - iOS Safari zooms the whole page when a text control whose computed
+     font-size is below 16px receives focus. On touch devices and small
+     screens every form control is raised to 1rem (16px) via
+     --sr-input-font-size, so tapping/focusing any input, search field,
+     select or textarea keeps the page at its current zoom level.
+     Desktop (hover: hover / pointer: fine above 575.98px) is untouched.
+   - Modals with the on-screen keyboard open: dialogs anchor to the top
+     (the keyboard covers the bottom) and "scrollable" dialogs use the
+     page-level scroll instead of an inner pane, so the browser can bring
+     the focused field above the keyboard and the modal stays in view.
+   ========================================================================= */
+@media (hover: none) and (pointer: coarse), (max-width: 575.98px) {
+    :root {
+        --sr-input-font-size: 1rem; /* 16px — iOS auto-zoom threshold */
+    }
+
+    /* Comfortable touch targets on small screens (40px minimum height) */
+    .form-control,
+    .form-select {
+        min-height: 2.5rem;
+    }
+
+    /* Inputs inside modals: never zoom, stay comfortably sized */
+    .modal .form-control,
+    .modal .form-select,
+    .modal .form-control-sm,
+    .modal .form-select-sm {
+        font-size: 0.85rem;
+        min-height: 2.5rem;
+    }
+
+    /* Keep dialogs reachable while the keyboard is open: anchor to the top
+       of the viewport instead of vertical centering. */
+    .modal-dialog-centered {
+        align-items: flex-start;
+    }
+
+    /* Long forms scroll with the page rather than an inner pane, so the
+       browser can scroll the focused input above the keyboard. */
+    .modal-dialog-scrollable {
+        height: auto;
+        max-height: none;
+    }
+    .modal-dialog-scrollable .modal-content {
+        max-height: none;
+    }
+    .modal-dialog-scrollable .modal-body {
+        overflow-y: visible;
+        max-height: none;
     }
 }

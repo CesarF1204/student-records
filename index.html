@@ -2,7 +2,11 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- interactive-widget=resizes-content: on Android the layout viewport
+             shrinks while the on-screen keyboard is open, so modals and the
+             page keep the focused field visible above the keyboard. Ignored
+             by iOS Safari. Pinch-zoom for users stays fully enabled. -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
         <title>Student Records &middot; Dashboard</title>
         <meta name="description" content="Admin dashboard for managing student records." />
 

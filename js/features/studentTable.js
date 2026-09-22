@@ -217,7 +217,7 @@ export const renderTable = (list) => {
     const shown = list.length === 0 ? 0 : from + pageItems.length;
     resultRange.textContent = list.length === 0
         ? "0 of " + records.length + " records"
-        : `Showing ${from + 1} â€“ ${shown} of ${records.length} records`;
+        : `Showing ${from + 1} - ${shown} of ${records.length} records`;
 
     renderPagination(list.length);
 };
