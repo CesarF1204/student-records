@@ -1154,9 +1154,17 @@ html, body {
         text-align: center;
     }
 
-    /* Modals stay centered on small screens with safe side margins */
+    /* Modals stay centered (vertically + horizontally) on small screens while
+       staying within safe side margins, so the Cancel action remains easy to
+       reach on phones and small tablets. The export modal gets its own
+       width/restraint rule so the Bootstrap .modal-dialog-centered utility
+       (flex vertical centering) is not overridden globally. */
+    .modal-dialog {
+        margin: auto 0.6rem;
+        max-width: calc(100% - 1.2rem);
+    }
     .modal-dialog-centered {
-        margin: 0.6rem auto;
+        margin: auto 0.6rem;
         max-width: calc(100% - 1.2rem);
     }
     .modal-footer { flex-wrap: wrap; }
@@ -1167,7 +1175,17 @@ html, body {
         right: 0.75rem;
         padding: 0 !important;
     }
-    .sr-toast { width: 100%; }
+    .toast-container .toast {
+        margin: 0.5rem auto 0;
+    }
+    .toast-container .toast .toast-card {
+        margin-inline: auto;
+        max-width: 100%;
+        width: 100%;
+    }
+    .toast-container .toast .me-3 {
+        margin-inline: auto 0;
+    }
 }
 
 /* Modals are always centered (all screens) — Bootstrap's
@@ -1214,6 +1232,24 @@ html, body {
 
 .sr-export-error-detail {
     font-size: 0.88rem;
+}
+
+/* Cancel action in the export modal — quiet, neutral look that does not
+   compete with the progress indicator, plus a comfortable tap target on all
+   screen sizes. The footer already stretches buttons to full width on small
+   screens, so a single Cancel button stays inside the modal with no overflow. */
+#exportCancelBtn {
+    min-height: 44px;
+}
+
+/* Subtle hover and keyboard-focus state so the action is clearly interactive
+   without competing with the striped progress bar. (Focus-visible outline is
+   provided globally by the :focus-visible rule.) */
+#exportCancelBtn:hover,
+#exportCancelBtn:focus-visible {
+    background-color: var(--sr-muted-soft);
+    border-color: var(--sr-border);
+    color: var(--sr-ink);
 }
 
 @media (max-width: 480px) {
@@ -1316,11 +1352,8 @@ html, body {
         min-height: 2.5rem;
     }
 
-    /* Keep dialogs reachable while the keyboard is open: anchor to the top
-       of the viewport instead of vertical centering. */
-    .modal-dialog-centered {
-        align-items: flex-start;
-    }
+    /* Keep dialogs comfortably sized within the viewport on small screens so
+       the Cancel action and all modal content remain reachable and centered. */
 
     /* Long forms scroll with the page rather than an inner pane, so the
        browser can scroll the focused input above the keyboard. */

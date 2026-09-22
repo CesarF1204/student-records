@@ -7,6 +7,9 @@ export const DEFAULT_PAGE_SIZE = 5;
 /** Duration of the simulated export progress (1% → 100%). */
 export const EXPORT_DURATION_MS = 10000;
 
+/** Delay before the export modal closes itself after the user cancels. */
+export const EXPORT_CANCEL_CLOSE_DELAY_MS = 500;
+
 /** Number of tone classes (avatar-tone-0 … avatar-tone-5) in style.css. */
 export const AVATAR_TONES = 6;
 

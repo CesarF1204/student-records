@@ -1,5 +1,5 @@
 import { $ } from "../utils/dom.js";
-import { EXPORT_DURATION_MS, EXPORT_FILENAME } from "../config/constants.js";
+import { EXPORT_DURATION_MS, EXPORT_CANCEL_CLOSE_DELAY_MS, EXPORT_FILENAME } from "../config/constants.js";
 import { getExportModal, setExportCleanup } from "../components/modals.js";
 import { showToast } from "../components/toast.js";
 import { records } from "../store/studentStore.js";
@@ -59,6 +59,8 @@ const exportCSV = () => {
 let exportTimer = null;
 let safetyTimer = null;
 let cleanupRegistered = false;
+let closeDelayTimer = null;
+let cancelled = false;
 
 /**
  * DOCU: Updates the progress bar, percent label and aria state.
@@ -82,12 +84,16 @@ const setExportProgress = (percent) => {
  * @author Cesar
  */
 const resetExportModal = () => {
+    const bar = $("#exportProgressBar");
+    bar.classList.add("progress-bar-striped", "progress-bar-animated");
     setExportProgress(1);
     $("#exportMessage").classList.remove("d-none");
     $("#exportComplete").classList.add("d-none");
     $("#exportError").classList.add("d-none");
     $("#exportErrorDetail").classList.add("d-none");
-    $("#exportModalFooter").classList.add("d-none");
+    $("#exportModalFooter").classList.remove("d-none");
+    $("#exportCancelBtn").classList.remove("d-none");
+    $("#exportCloseBtn").classList.add("d-none");
 };
 
 /**
@@ -109,6 +115,21 @@ const clearExportTimer = () => {
 };
 
 /**
+ * DOCU: Stops the pending cancel-close timeout so it does not fire after the
+ * modal has already been (or is being) dismissed by another path.
+ * Last Updated Date: September 22, 2026
+ * @function clearCloseDelayTimer
+ * @returns {void}
+ * @author Cesar
+ */
+const clearCloseDelayTimer = () => {
+    if (closeDelayTimer) {
+        clearTimeout(closeDelayTimer);
+        closeDelayTimer = null;
+    }
+};
+
+/**
  * DOCU: Shows the export-complete state in the modal.
  * Last Updated Date: September 22, 2026
  * @function showExportComplete
@@ -119,6 +140,8 @@ const showExportComplete = () => {
     $("#exportMessage").classList.add("d-none");
     $("#exportComplete").classList.remove("d-none");
     $("#exportModalFooter").classList.remove("d-none");
+    $("#exportCancelBtn").classList.add("d-none");
+    $("#exportCloseBtn").classList.remove("d-none");
 };
 
 /**
@@ -133,6 +156,8 @@ const showExportError = () => {
     $("#exportError").classList.remove("d-none");
     $("#exportErrorDetail").classList.remove("d-none");
     $("#exportModalFooter").classList.remove("d-none");
+    $("#exportCancelBtn").classList.add("d-none");
+    $("#exportCloseBtn").classList.remove("d-none");
 };
 
 /**
@@ -145,10 +170,41 @@ const showExportError = () => {
 const registerCleanup = () => {
     if (cleanupRegistered) return;
     cleanupRegistered = true;
+    $("#exportCancelBtn").addEventListener("click", cancelExport);
     setExportCleanup(() => {
         clearExportTimer();
+        clearCloseDelayTimer();
         $("#exportBtn").disabled = false;
     });
+};
+
+/**
+ * DOCU: Cancels the running export, stops progress, blocks the download,
+ * closes the modal after exactly 0.5 s, and shows a cancellation toast.
+ * Last Updated Date: September 22, 2026
+ * @function cancelExport
+ * @returns {void}
+ * @author Cesar
+ */
+const cancelExport = () => {
+    if (cancelled || !exportTimer) return;
+    cancelled = true;
+
+    clearExportTimer();
+
+    const bar = $("#exportProgressBar");
+    bar.classList.remove("progress-bar-striped", "progress-bar-animated");
+
+    /* Remove the cancel action immediately so it cannot be triggered twice
+       while the modal closes itself 0.5 s later. */
+    $("#exportCancelBtn").classList.add("d-none");
+
+    clearCloseDelayTimer();
+    closeDelayTimer = setTimeout(() => {
+        closeDelayTimer = null;
+        getExportModal()?.hide();
+        showToast("Export cancelled", "The export was cancelled.", "info");
+    }, EXPORT_CANCEL_CLOSE_DELAY_MS);
 };
 
 /**
@@ -159,9 +215,10 @@ const registerCleanup = () => {
  * @author Cesar
  */
 export const startExport = () => {
-    if (exportTimer) return;
+    if (exportTimer || closeDelayTimer) return;
 
     registerCleanup();
+    cancelled = false;
     $("#exportBtn").disabled = true;
     resetExportModal();
     getExportModal().show();
@@ -175,7 +232,7 @@ export const startExport = () => {
     let worker = null;
     let finished = false;
     const finish = () => {
-        if (finished) return;
+        if (finished || cancelled) return;
         finished = true;
         clearExportTimer();
         try {
@@ -193,6 +250,7 @@ export const startExport = () => {
         exportTimer = worker;
 
         worker.onmessage = () => {
+            if (cancelled || finished) return;
             const percent = Math.min(100, 1 + Math.floor((Date.now() - startedAt) / tickMs));
             setExportProgress(percent);
             if (percent >= 100) finish();
@@ -200,6 +258,7 @@ export const startExport = () => {
     } catch {
         /* Fallback interval, still time-based for throttled background tabs. */
         exportTimer = setInterval(() => {
+            if (cancelled || finished) return;
             const percent = Math.min(100, 1 + Math.floor((Date.now() - startedAt) / tickMs));
             setExportProgress(percent);
             if (percent >= 100) finish();
