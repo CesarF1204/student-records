@@ -99,7 +99,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-15",
         scores: [84, 81, 87],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/3135/3135825.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/201/201818.png",
     },
     {
         id: 111,
@@ -119,7 +119,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-17",
         scores: [73, 76, 71],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/3135/3135768.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/921/921110.png",
     },
     {
         id: 113,
@@ -129,7 +129,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-18",
         scores: [96, 93, 95],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/3135/3135801.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/4829/4829583.png",
     },
     {
         id: 114,
@@ -139,7 +139,7 @@ export const students = [
         active: false,
         enrolled: "2026-09-19",
         scores: [68, 70, 66],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/3135/3135926.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/4139/4139977.png",
     },
     {
         id: 115,
@@ -149,7 +149,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-14",
         scores: [80, 83, 79],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/3135/3135957.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/4202/4202835.png",
     },
     {
         id: 116,
@@ -159,7 +159,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-20",
         scores: [87, 85, 89],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/3135/3135843.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/3220/3220429.png",
     },
     {
         id: 117,
@@ -169,7 +169,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-21",
         scores: [77, 74, 78],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/3135/3135885.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/9702/9702934.png",
     },
     {
         id: 118,
@@ -179,7 +179,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-15",
         scores: [93, 90, 91],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/3135/3135905.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/1163/1163110.png",
     },
     {
         id: 119,
@@ -189,7 +189,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-16",
         scores: [62, 65, 60],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/3135/3135875.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/6275/6275760.png",
     },
     {
         id: 120,
@@ -229,7 +229,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-20",
         scores: [76, 79, 75],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/4140/4140027.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/4086/4086679.png",
     },
     {
         id: 124,
@@ -269,7 +269,7 @@ export const students = [
         active: false,
         enrolled: "2026-09-16",
         scores: [58, 61, 57],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/924/924874.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/4139/4139948.png",
     },
     {
         id: 128,
@@ -309,7 +309,7 @@ export const students = [
         active: false,
         enrolled: "2026-09-20",
         scores: [70, 73, 68],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/924/924867.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/163/163801.png",
     },
     {
         id: 132,
@@ -319,7 +319,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-14",
         scores: [86, 84, 88],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/921/921143.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/13481/13481872.png",
     },
     {
         id: 133,
@@ -329,7 +329,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-15",
         scores: [75, 72, 78],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/924/924884.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/4789/4789239.png",
     },
     {
         id: 134,
@@ -349,7 +349,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-17",
         scores: [66, 69, 63],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/924/924892.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/19025/19025026.png",
     },
     {
         id: 136,
@@ -369,7 +369,7 @@ export const students = [
         active: false,
         enrolled: "2026-09-19",
         scores: [59, 62, 56],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/924/924908.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/921/921110.png",
     },
     {
         id: 138,
@@ -399,7 +399,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-14",
         scores: [93, 91, 95],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/219/219986.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/4509/4509555.png",
     },
     {
         id: 141,
@@ -479,7 +479,7 @@ export const students = [
         active: true,
         enrolled: "2026-09-14",
         scores: [91, 88, 94],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/4202/4202835.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/2423/2423917.png",
     },
     {
         id: 149,
@@ -499,6 +499,6 @@ export const students = [
         active: true,
         enrolled: "2026-09-16",
         scores: [87, 90, 85],
-        avatarUrl: "https://cdn-icons-png.flaticon.com/128/1154/1154709.png",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/128/4202/4202832.png",
     },
 ];

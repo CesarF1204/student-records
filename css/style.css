@@ -1,19 +1,24 @@
-/* =========================================================================
-   Student Records Dashboard — stylesheet
-   Professional admin UI. Semantic color system + restrained details.
-   ========================================================================= */
-
 :root {
+    /* Tells the browser how to draw surfaces it owns (scrollbars, the native
+       select popup, the date picker) so they match the active mode. */
+    color-scheme: light;
+
     /* Brand / semantic palette */
     --sr-ink: #1c2733;
     --sr-muted: #5b6675;
     --sr-border: #e2e7ee;
     --sr-canvas: #f3f5f8;
     --sr-surface: #ffffff;
+    --sr-surface-raised: #ffffff; /* menus and other floating surfaces */
+    --sr-input-bg: #ffffff;
 
-    --sr-primary: #2f5b8e;
+    --sr-primary: #2f5b8e;          /* text, icons and links on surfaces */
     --sr-primary-strong: #244a75;
     --sr-primary-soft: #eaf1f8;
+    --sr-primary-solid: #2f5b8e;    /* filled buttons and active pagination */
+    --sr-primary-solid-hover: #244a75;
+    --sr-primary-solid-active: #1f3f63;
+    --sr-on-primary: #ffffff;
 
     --sr-success: #1e7d4c;
     --sr-success-soft: #e7f4ec;
@@ -23,6 +28,33 @@
     --sr-danger-soft: #f8e8e6;
     --sr-muted-badge: #6b7686;
     --sr-muted-soft: #eef1f4;
+
+    /* Interaction states (hover / focus / active / disabled) */
+    --sr-hover-tint: #d9e9fa;
+    --sr-hover-tint-strong: #c4ddf5;
+    --sr-hover-border: #cfd8e3;
+    --sr-placeholder: #9aa5b3;
+    --sr-focus-ring: 0 0 0 0.2rem rgba(47, 91, 142, 0.16);
+    --sr-focus-ring-danger: 0 0 0 0.2rem rgba(179, 56, 46, 0.16);
+    --sr-focus-ring-success: 0 0 0 0.2rem rgba(30, 125, 76, 0.16);
+    --sr-avatar-border: rgba(47, 91, 142, 0.16);
+
+    /* Elevation, loading shimmer and the table loading veil */
+    --sr-shadow-xs: 0 1px 2px rgba(20, 30, 45, 0.04);
+    --sr-shadow-hover: 0 6px 18px rgba(20, 30, 45, 0.07);
+    --sr-shadow-sm: 0 6px 18px rgba(20, 30, 45, 0.12);
+    --sr-shadow-md: 0 8px 20px rgba(28, 39, 51, 0.12);
+    --sr-skeleton-from: #e6eaf1;
+    --sr-skeleton-mid: #eef2f8;
+    --sr-veil: rgba(255, 255, 255, 0.65);
+
+    /* Avatar tones, picked deterministically from the name (avatar.js) */
+    --sr-tone-0-bg: #eaf1f8; --sr-tone-0-fg: #2f5b8e; --sr-tone-0-border: rgba(47, 91, 142, 0.22);
+    --sr-tone-1-bg: #e7f4ec; --sr-tone-1-fg: #1e7d4c; --sr-tone-1-border: rgba(30, 125, 76, 0.22);
+    --sr-tone-2-bg: #eef1f4; --sr-tone-2-fg: #3d4b5e; --sr-tone-2-border: rgba(61, 75, 94, 0.22);
+    --sr-tone-3-bg: #e9f0f5; --sr-tone-3-fg: #2a6b7a; --sr-tone-3-border: rgba(42, 107, 122, 0.22);
+    --sr-tone-4-bg: #f0ecf7; --sr-tone-4-fg: #5b4d8a; --sr-tone-4-border: rgba(91, 77, 138, 0.22);
+    --sr-tone-5-bg: #fbf1dc; --sr-tone-5-fg: #8a5f0e; --sr-tone-5-border: rgba(168, 107, 18, 0.25);
 
     /* Typography */
     --sr-font-display: "Manrope", "Segoe UI", system-ui, sans-serif;
@@ -36,16 +68,234 @@
        Desktop keeps the compact 0.95rem. */
     --sr-input-font-size: 0.95rem;
 
-    /* Re-map Bootstrap's primary so buttons/links follow the brand */
+    /* Re-map Bootstrap's semantic variables so every Bootstrap component
+       (buttons, links, cards, modals, dropdowns, tables, forms, toasts,
+       pagination, tooltips) inherits the app palette instead of Bootstrap's own
+       grays — in both color modes. */
     --bs-body-font-family: var(--sr-font-body);
-    --bs-primary: #2f5b8e;
-    --bs-primary-rgb: 47, 91, 142;
-    --bs-link-color: #2f5b8e;
-    --bs-link-color-rgb: 47, 91, 142;
-    --bs-link-hover-color: #244a75;
     --bs-body-bg: var(--sr-canvas);
+    --bs-body-bg-rgb: 243, 245, 248;
     --bs-body-color: var(--sr-ink);
+    --bs-body-color-rgb: 28, 39, 51;
+    --bs-emphasis-color: var(--sr-ink);
+    --bs-emphasis-color-rgb: 28, 39, 51;
+    --bs-secondary-color: var(--sr-muted);
+    --bs-secondary-color-rgb: 91, 102, 117;
+    --bs-tertiary-color: var(--sr-placeholder);
+    --bs-secondary-bg: var(--sr-muted-soft);
+    --bs-secondary-bg-rgb: 238, 241, 244;
+    --bs-tertiary-bg: var(--sr-surface-raised);
     --bs-border-color: var(--sr-border);
+    --bs-border-color-translucent: rgba(28, 39, 51, 0.12);
+    --bs-heading-color: var(--sr-ink);
+    --bs-primary: var(--sr-primary-solid);
+    --bs-primary-rgb: 47, 91, 142;
+    --bs-link-color: var(--sr-primary);
+    --bs-link-color-rgb: 47, 91, 142;
+    --bs-link-hover-color: var(--sr-primary-strong);
+    --bs-focus-ring-color: rgba(47, 91, 142, 0.16);
+    /* Status utilities (.text-success / .text-warning / .text-danger) follow the
+       app palette so status text stays readable on light surfaces too. */
+    --bs-success-rgb: 30, 125, 76;
+    --bs-warning-rgb: 168, 107, 18;
+    --bs-danger-rgb: 179, 56, 46;
+    --bs-info-rgb: 42, 107, 122;
+    --bs-form-valid-color: var(--sr-success);
+    --bs-form-valid-border-color: var(--sr-success);
+    --bs-form-invalid-color: var(--sr-danger);
+    --bs-form-invalid-border-color: var(--sr-danger);
+    --bs-card-bg: var(--sr-surface);
+    --bs-card-cap-bg: var(--sr-surface);
+    --bs-card-border-color: var(--sr-border);
+    --bs-modal-bg: var(--sr-surface);
+    --bs-modal-color: var(--sr-ink);
+    --bs-modal-border-color: var(--sr-border);
+    --bs-modal-header-border-color: var(--sr-border);
+    --bs-modal-footer-border-color: var(--sr-border);
+    --bs-dropdown-bg: var(--sr-surface-raised);
+    --bs-dropdown-color: var(--sr-ink);
+    --bs-dropdown-link-color: var(--sr-ink);
+    --bs-dropdown-link-hover-color: var(--sr-ink);
+    --bs-dropdown-link-hover-bg: var(--sr-hover-tint);
+    --bs-dropdown-link-active-color: var(--sr-on-primary);
+    --bs-dropdown-link-active-bg: var(--sr-primary-solid);
+    --bs-dropdown-border-color: var(--sr-border);
+    --bs-dropdown-divider-bg: var(--sr-border);
+    --bs-toast-bg: var(--sr-surface);
+    --bs-toast-color: var(--sr-ink);
+    --bs-toast-header-bg: var(--sr-surface);
+    --bs-toast-header-color: var(--sr-muted);
+    --bs-toast-border-color: var(--sr-border);
+    --bs-pagination-color: var(--sr-primary);
+    --bs-pagination-bg: var(--sr-surface);
+    --bs-pagination-border-color: var(--sr-border);
+    --bs-pagination-hover-color: var(--sr-primary-strong);
+    --bs-pagination-hover-bg: var(--sr-hover-tint);
+    --bs-pagination-hover-border-color: var(--sr-border);
+    --bs-pagination-focus-color: var(--sr-primary-strong);
+    --bs-pagination-focus-bg: var(--sr-hover-tint);
+    --bs-pagination-focus-box-shadow: var(--sr-focus-ring);
+    --bs-pagination-active-color: var(--sr-on-primary);
+    --bs-pagination-active-bg: var(--sr-primary-solid);
+    --bs-pagination-active-border-color: var(--sr-primary-solid);
+    --bs-pagination-disabled-color: var(--sr-placeholder);
+    --bs-pagination-disabled-bg: var(--sr-surface);
+    --bs-pagination-disabled-border-color: var(--sr-border);
+    --bs-progress-bg: var(--sr-muted-soft);
+    --bs-tooltip-bg: var(--sr-ink);
+    --bs-tooltip-color: var(--sr-surface);
+}
+
+/* ============================ Dark mode ============================
+   Deliberately designed rather than inverted: the canvas deepens to navy,
+   surfaces are lifted above it so cards, menus and modals still read as
+   raised, and the brand blue is lightened until it clears 7:1 on a surface.
+   Semantic colors keep their hue while gaining luminance, and soft tints
+   become deep tints so badges, score boxes and stat icons stay legible. */
+:root[data-bs-theme="dark"] {
+    color-scheme: dark;
+
+    --sr-ink: #e6ecf5;
+    --sr-muted: #97a5ba;
+    --sr-border: #26334a;
+    --sr-canvas: #0b1220;
+    --sr-surface: #131c2b;
+    --sr-surface-raised: #182338;
+    --sr-input-bg: #0f1826;
+
+    --sr-primary: #7cb3ea;
+    --sr-primary-strong: #a5cdf5;
+    --sr-primary-soft: #17263c;
+    --sr-primary-solid: #2f6bb0;
+    --sr-primary-solid-hover: #3a76b8;
+    --sr-primary-solid-active: #2a5f9e;
+    --sr-on-primary: #ffffff;
+
+    --sr-success: #5ed39b;
+    --sr-success-soft: #10281f;
+    --sr-warning: #e8b463;
+    --sr-warning-soft: #2a2110;
+    --sr-danger: #f0908a;
+    --sr-danger-soft: #2a1614;
+    --sr-muted-badge: #9aa7bb;
+    --sr-muted-soft: #1e2a3d;
+
+    --sr-hover-tint: rgba(124, 179, 234, 0.14);
+    --sr-hover-tint-strong: rgba(124, 179, 234, 0.24);
+    --sr-hover-border: #33435c;
+    --sr-placeholder: #7c8a9e;
+    --sr-focus-ring: 0 0 0 0.2rem rgba(124, 179, 234, 0.28);
+    --sr-focus-ring-danger: 0 0 0 0.2rem rgba(240, 144, 138, 0.26);
+    --sr-focus-ring-success: 0 0 0 0.2rem rgba(94, 211, 155, 0.24);
+    --sr-avatar-border: rgba(124, 179, 234, 0.22);
+
+    --sr-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --sr-shadow-hover: 0 6px 18px rgba(0, 0, 0, 0.45);
+    --sr-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.45);
+    --sr-shadow-md: 0 10px 24px rgba(0, 0, 0, 0.5);
+    --sr-skeleton-from: #1a2434;
+    --sr-skeleton-mid: #22303f;
+    --sr-veil: rgba(11, 18, 32, 0.65);
+
+    /* Avatar tones: deep tint with a light glyph, one pair per tone. */
+    --sr-tone-0-bg: #16273c; --sr-tone-0-fg: #8dbfef; --sr-tone-0-border: rgba(141, 191, 239, 0.28);
+    --sr-tone-1-bg: #12291f; --sr-tone-1-fg: #6fd3a3; --sr-tone-1-border: rgba(111, 211, 163, 0.28);
+    --sr-tone-2-bg: #1d2531; --sr-tone-2-fg: #a9b7c9; --sr-tone-2-border: rgba(169, 183, 201, 0.28);
+    --sr-tone-3-bg: #12262c; --sr-tone-3-fg: #74c6d8; --sr-tone-3-border: rgba(116, 198, 216, 0.28);
+    --sr-tone-4-bg: #1f1c33; --sr-tone-4-fg: #b1a3e6; --sr-tone-4-border: rgba(177, 163, 230, 0.28);
+    --sr-tone-5-bg: #2b2313; --sr-tone-5-fg: #e2b25f; --sr-tone-5-border: rgba(226, 178, 95, 0.3);
+
+    /* Bootstrap's own dark palette is replaced by the tokens above, so cards,
+       menus, modals, toasts, tables and pagination keep the app's look. */
+    --bs-body-bg: var(--sr-canvas);
+    --bs-body-bg-rgb: 11, 18, 32;
+    --bs-body-color: var(--sr-ink);
+    --bs-body-color-rgb: 230, 236, 245;
+    --bs-emphasis-color: var(--sr-ink);
+    --bs-emphasis-color-rgb: 230, 236, 245;
+    --bs-secondary-color: var(--sr-muted);
+    --bs-secondary-color-rgb: 151, 165, 186;
+    --bs-tertiary-color: var(--sr-placeholder);
+    --bs-secondary-bg: var(--sr-muted-soft);
+    --bs-secondary-bg-rgb: 30, 42, 61;
+    --bs-tertiary-bg: var(--sr-surface-raised);
+    --bs-border-color: var(--sr-border);
+    --bs-border-color-translucent: rgba(255, 255, 255, 0.1);
+    --bs-heading-color: var(--sr-ink);
+    --bs-primary: var(--sr-primary-solid);
+    --bs-primary-rgb: 124, 179, 234;
+    --bs-link-color: var(--sr-primary);
+    --bs-link-color-rgb: 124, 179, 234;
+    --bs-link-hover-color: var(--sr-primary-strong);
+    --bs-focus-ring-color: rgba(124, 179, 234, 0.28);
+    --bs-success-rgb: 94, 211, 155;
+    --bs-warning-rgb: 232, 180, 99;
+    --bs-danger-rgb: 240, 144, 138;
+    --bs-info-rgb: 116, 198, 216;
+    --bs-form-valid-color: var(--sr-success);
+    --bs-form-valid-border-color: var(--sr-success);
+    --bs-form-invalid-color: var(--sr-danger);
+    --bs-form-invalid-border-color: var(--sr-danger);
+    /* Bootstrap's select chevron is drawn with a dark stroke by default. */
+    --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2397a5ba' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    --bs-card-bg: var(--sr-surface);
+    --bs-card-cap-bg: var(--sr-surface);
+    --bs-card-border-color: var(--sr-border);
+    --bs-modal-bg: var(--sr-surface);
+    --bs-modal-color: var(--sr-ink);
+    --bs-modal-border-color: var(--sr-border);
+    --bs-modal-header-border-color: var(--sr-border);
+    --bs-modal-footer-border-color: var(--sr-border);
+    --bs-dropdown-bg: var(--sr-surface-raised);
+    --bs-dropdown-color: var(--sr-ink);
+    --bs-dropdown-link-color: var(--sr-ink);
+    --bs-dropdown-link-hover-color: var(--sr-ink);
+    --bs-dropdown-link-hover-bg: var(--sr-hover-tint);
+    --bs-dropdown-link-active-color: var(--sr-on-primary);
+    --bs-dropdown-link-active-bg: var(--sr-primary-solid);
+    --bs-dropdown-border-color: var(--sr-border);
+    --bs-dropdown-divider-bg: var(--sr-border);
+    --bs-toast-bg: var(--sr-surface);
+    --bs-toast-color: var(--sr-ink);
+    --bs-toast-header-bg: var(--sr-surface);
+    --bs-toast-header-color: var(--sr-muted);
+    --bs-toast-border-color: var(--sr-border);
+    --bs-pagination-color: var(--sr-primary);
+    --bs-pagination-bg: var(--sr-surface);
+    --bs-pagination-border-color: var(--sr-border);
+    --bs-pagination-hover-color: var(--sr-primary-strong);
+    --bs-pagination-hover-bg: var(--sr-hover-tint);
+    --bs-pagination-hover-border-color: var(--sr-border);
+    --bs-pagination-focus-color: var(--sr-primary-strong);
+    --bs-pagination-focus-bg: var(--sr-hover-tint);
+    --bs-pagination-focus-box-shadow: var(--sr-focus-ring);
+    --bs-pagination-active-color: var(--sr-on-primary);
+    --bs-pagination-active-bg: var(--sr-primary-solid);
+    --bs-pagination-active-border-color: var(--sr-primary-solid);
+    --bs-pagination-disabled-color: var(--sr-placeholder);
+    --bs-pagination-disabled-bg: var(--sr-surface);
+    --bs-pagination-disabled-border-color: var(--sr-border);
+    --bs-progress-bg: var(--sr-muted-soft);
+    --bs-tooltip-bg: #22303f;
+    --bs-tooltip-color: var(--sr-ink);
+}
+
+/* The Cancel/Close actions use .btn-light; in dark mode they become quiet
+   surface buttons instead of standing out as Bootstrap light gray. */
+[data-bs-theme="dark"] .btn-light {
+    --bs-btn-color: var(--sr-ink);
+    --bs-btn-bg: var(--sr-muted-soft);
+    --bs-btn-border-color: var(--sr-border);
+    --bs-btn-hover-color: var(--sr-ink);
+    --bs-btn-hover-bg: var(--sr-hover-tint-strong);
+    --bs-btn-hover-border-color: var(--sr-hover-border);
+    --bs-btn-active-color: var(--sr-ink);
+    --bs-btn-active-bg: var(--sr-hover-tint-strong);
+    --bs-btn-active-border-color: var(--sr-hover-border);
+    --bs-btn-disabled-color: var(--sr-placeholder);
+    --bs-btn-disabled-bg: var(--sr-muted-soft);
+    --bs-btn-disabled-border-color: var(--sr-border);
+    --bs-btn-focus-shadow-rgb: 124, 179, 234;
 }
 
 * {
@@ -101,8 +351,8 @@ a {
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    background: var(--sr-primary);
-    color: #fff;
+    background: var(--sr-primary-solid);
+    color: var(--sr-on-primary);
     font-size: 1rem;
     margin-right: 8px;
 }
@@ -135,6 +385,146 @@ a {
     color: var(--sr-ink);
 }
 
+.sr-user-btn:hover,
+.sr-user-btn:focus-visible,
+.sr-user-btn[aria-expanded="true"] {
+    border-color: var(--sr-hover-border);
+    background: var(--sr-hover-tint);
+    color: var(--sr-ink);
+}
+
+/* ============================ Theme toggle ============================
+   A single switch, always on screen: it sits outside the collapsing menu so
+   it stays reachable from the brand row on phones and tablets as well as on
+   desktop. Track, thumb and slide distance all derive from three custom
+   properties, so the control scales down without breaking the slide. */
+.sr-theme-toggle {
+    --sr-toggle-w: 58px;
+    --sr-toggle-h: 30px;
+    --sr-toggle-pad: 3px;
+    --sr-toggle-thumb: calc(var(--sr-toggle-h) - (2 * var(--sr-toggle-pad)) - 2px);
+    --sr-toggle-travel: calc(var(--sr-toggle-w) - var(--sr-toggle-h));
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 0 0 auto;
+    width: var(--sr-toggle-w);
+    min-width: var(--sr-toggle-w);
+    height: var(--sr-toggle-h);
+    padding: 0 6px;
+    border: 1px solid var(--sr-border);
+    border-radius: 999px;
+    background: var(--sr-muted-soft);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.sr-theme-toggle:hover {
+    background: var(--sr-hover-tint);
+    border-color: var(--sr-hover-border);
+}
+
+.sr-theme-toggle:active {
+    background: var(--sr-hover-tint-strong);
+}
+
+.sr-theme-toggle .bi {
+    position: relative;
+    z-index: 1;
+    font-size: 0.72rem;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.sr-theme-toggle-thumb {
+    position: absolute;
+    top: var(--sr-toggle-pad);
+    left: var(--sr-toggle-pad);
+    z-index: 0;
+    width: var(--sr-toggle-thumb);
+    height: var(--sr-toggle-thumb);
+    border-radius: 50%;
+    background: var(--sr-surface);
+    box-shadow: var(--sr-shadow-xs);
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease;
+}
+
+/* Light mode parks the thumb under the sun, dark mode under the moon. */
+.sr-theme-toggle[aria-checked="true"] .sr-theme-toggle-thumb {
+    transform: translateX(var(--sr-toggle-travel));
+}
+
+.sr-theme-toggle .sr-theme-icon-light { color: var(--sr-primary); }
+.sr-theme-toggle .sr-theme-icon-dark { color: var(--sr-placeholder); }
+.sr-theme-toggle[aria-checked="true"] .sr-theme-icon-light { color: var(--sr-placeholder); }
+.sr-theme-toggle[aria-checked="true"] .sr-theme-icon-dark { color: var(--sr-primary); }
+
+/* ============================ Theme switching ============================
+   Inspired by the reference portfolio: a soft full-page wash crossfades the
+   incoming palette while the themed surfaces fade instead of snapping. The
+   transition rule is scoped to a class theme.js adds for one switch only, so
+   ordinary hover timings are never altered; reduced motion drops both. */
+.sr-theme-fade {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    pointer-events: none;
+    background: var(--sr-theme-fade-color, transparent);
+    animation: sr-theme-fade 0.34s ease forwards;
+}
+
+@keyframes sr-theme-fade {
+    from { opacity: 0; }
+    35%  { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html.sr-theme-changing body,
+    html.sr-theme-changing .sr-navbar,
+    html.sr-theme-changing .sr-footer,
+    html.sr-theme-changing .sr-card,
+    html.sr-theme-changing .card,
+    html.sr-theme-changing .card-header,
+    html.sr-theme-changing .sr-stat,
+    html.sr-theme-changing .sr-stat:hover,
+    html.sr-theme-changing .modal-content,
+    html.sr-theme-changing .modal-header,
+    html.sr-theme-changing .modal-footer,
+    html.sr-theme-changing .dropdown-menu,
+    html.sr-theme-changing .dropdown-item,
+    html.sr-theme-changing .sr-toast,
+    html.sr-theme-changing .toast-header,
+    html.sr-theme-changing .form-control,
+    html.sr-theme-changing .form-select,
+    html.sr-theme-changing .form-check-input,
+    html.sr-theme-changing .input-group-text,
+    html.sr-theme-changing .badge-soft,
+    html.sr-theme-changing .score-box,
+    html.sr-theme-changing .stat-icon,
+    html.sr-theme-changing .avatar,
+    html.sr-theme-changing .sr-table thead th,
+    html.sr-theme-changing .sr-table tbody tr,
+    html.sr-theme-changing .sr-find-result,
+    html.sr-theme-changing .sr-identity-row,
+    html.sr-theme-changing .sr-table-loading-badge,
+    html.sr-theme-changing .sr-pagination .page-link,
+    html.sr-theme-changing .sr-export-progress,
+    html.sr-theme-changing .progress,
+    html.sr-theme-changing .empty-state i,
+    html.sr-theme-changing .sr-user-btn,
+    html.sr-theme-changing .btn,
+    html.sr-theme-changing .sr-theme-toggle,
+    html.sr-theme-changing .sr-theme-toggle .bi,
+    html.sr-theme-changing .sr-theme-toggle-thumb {
+        transition: background-color 0.32s ease, color 0.32s ease,
+            border-color 0.32s ease, box-shadow 0.32s ease;
+    }
+}
+
 .avatar {
     position: relative;
     display: inline-flex;
@@ -150,7 +540,7 @@ a {
     line-height: 1;
     letter-spacing: 0.02em;
     user-select: none;
-    border: 1px solid rgba(47, 91, 142, 0.16);
+    border: 1px solid var(--sr-avatar-border);
 }
 
 .avatar img {
@@ -190,12 +580,12 @@ a {
 
 /* Deterministic, professional tones — chosen by name hash so each
    user keeps a stable color without implying a photo identity. */
-.avatar-tone-0 { background: #eaf1f8; color: #2f5b8e; border-color: rgba(47, 91, 142, 0.22); }
-.avatar-tone-1 { background: #e7f4ec; color: #1e7d4c; border-color: rgba(30, 125, 76, 0.22); }
-.avatar-tone-2 { background: #eef1f4; color: #3d4b5e; border-color: rgba(61, 75, 94, 0.22); }
-.avatar-tone-3 { background: #e9f0f5; color: #2a6b7a; border-color: rgba(42, 107, 122, 0.22); }
-.avatar-tone-4 { background: #f0ecf7; color: #5b4d8a; border-color: rgba(91, 77, 138, 0.22); }
-.avatar-tone-5 { background: #fbf1dc; color: #8a5f0e; border-color: rgba(168, 107, 18, 0.25); }
+.avatar-tone-0 { background: var(--sr-tone-0-bg); color: var(--sr-tone-0-fg); border-color: var(--sr-tone-0-border); }
+.avatar-tone-1 { background: var(--sr-tone-1-bg); color: var(--sr-tone-1-fg); border-color: var(--sr-tone-1-border); }
+.avatar-tone-2 { background: var(--sr-tone-2-bg); color: var(--sr-tone-2-fg); border-color: var(--sr-tone-2-border); }
+.avatar-tone-3 { background: var(--sr-tone-3-bg); color: var(--sr-tone-3-fg); border-color: var(--sr-tone-3-border); }
+.avatar-tone-4 { background: var(--sr-tone-4-bg); color: var(--sr-tone-4-fg); border-color: var(--sr-tone-4-border); }
+.avatar-tone-5 { background: var(--sr-tone-5-bg); color: var(--sr-tone-5-fg); border-color: var(--sr-tone-5-border); }
 
 /* Account menu header (avatar + name + email) */
 .sr-account-header {
@@ -319,7 +709,7 @@ a {
     position: relative;
     border: 1px solid var(--sr-border);
     border-radius: var(--sr-radius);
-    box-shadow: 0 1px 2px rgba(20, 30, 45, 0.04);
+    box-shadow: var(--sr-shadow-xs);
     padding: 1rem 1rem 0.75rem;
     height: 100%;
     text-align: center;
@@ -327,8 +717,8 @@ a {
 }
 
 .sr-stat:hover {
-    border-color: #cfd8e3;
-    box-shadow: 0 6px 18px rgba(20, 30, 45, 0.07);
+    border-color: var(--sr-hover-border);
+    box-shadow: var(--sr-shadow-hover);
 }
 
 .stat-icon {
@@ -376,7 +766,7 @@ a {
 .sr-card {
     border: 1px solid var(--sr-border);
     border-radius: var(--sr-radius);
-    box-shadow: 0 1px 2px rgba(20, 30, 45, 0.04);
+    box-shadow: var(--sr-shadow-xs);
 }
 
 .sr-card .card-header {
@@ -410,7 +800,7 @@ a {
 }
 
 .sr-input-prefix {
-    background: var(--sr-surface);
+    background: var(--sr-input-bg);
     border: 1px solid var(--sr-border);
     color: var(--sr-muted);
 }
@@ -420,6 +810,21 @@ a {
     border-radius: 8px;
     font-size: var(--sr-input-font-size);
     line-height: 1.5;
+    /* The input surface is its own token so fields can read as recessed
+       (dark mode) or flat-white (light mode) without touching --sr-surface. */
+    background-color: var(--sr-input-bg);
+    color: var(--sr-ink);
+}
+
+.form-control::placeholder {
+    color: var(--sr-placeholder);
+    opacity: 1;
+}
+
+.form-control:disabled,
+.form-select:disabled {
+    background-color: var(--sr-muted-soft);
+    color: var(--sr-placeholder);
 }
 
 .form-select {
@@ -444,7 +849,7 @@ a {
 
 .form-control:focus, .form-select:focus {
     border-color: var(--sr-primary);
-    box-shadow: 0 0 0 0.2rem rgba(47, 91, 142, 0.16);
+    box-shadow: var(--sr-focus-ring);
 }
 
 .form-text {
@@ -552,7 +957,7 @@ a {
 @media (hover: hover) and (min-width: 768px) {
     .sr-table tbody tr:hover > * {
         --bs-table-accent-bg: transparent;
-        background-color: #d9e9fa;
+        background-color: var(--sr-hover-tint);
     }
 }
 
@@ -662,7 +1067,7 @@ a {
 .action-drop .dropdown-toggle:hover,
 .action-drop .dropdown-toggle:focus-visible {
     color: var(--sr-ink);
-    background-color: #d9e9fa;
+    background-color: var(--sr-hover-tint);
     border-color: transparent;
     box-shadow: none;
 }
@@ -670,7 +1075,7 @@ a {
 .action-drop .dropdown-toggle:active,
 .action-drop .dropdown-toggle.show {
     color: var(--sr-ink);
-    background-color: #c4ddf5;
+    background-color: var(--sr-hover-tint-strong);
     border-color: transparent;
     box-shadow: none;
 }
@@ -692,7 +1097,7 @@ a {
 
 .action-drop .dropdown-item:hover,
 .action-drop .dropdown-item:focus-visible {
-    background-color: #d9e9fa;
+    background-color: var(--sr-hover-tint);
     color: var(--sr-ink);
 }
 
@@ -715,7 +1120,7 @@ a {
 
 .empty-state i {
     font-size: 2.2rem;
-    color: #9aa5b3;
+    color: var(--sr-placeholder);
     display: block;
     margin-bottom: 0.6rem;
 }
@@ -733,7 +1138,12 @@ a {
     display: block;
     height: 14px;
     border-radius: 4px;
-    background: linear-gradient(90deg, #e6eaf1 0%, #eef2f8 45%, #e6eaf1 90%);
+    background: linear-gradient(
+        90deg,
+        var(--sr-skeleton-from) 0%,
+        var(--sr-skeleton-mid) 45%,
+        var(--sr-skeleton-from) 90%
+    );
     background-size: 200% 100%;
     animation: shimmer 1.2s linear infinite;
 }
@@ -757,7 +1167,7 @@ a {
     justify-content: center;
     padding: 1rem;
     /* Translucent veil keeps the current rows visible while processing */
-    background: rgba(255, 255, 255, 0.65);
+    background: var(--sr-veil);
     opacity: 0;
     visibility: hidden;
     /* pointer-events: none keeps the table fully interactive while loading */
@@ -781,7 +1191,7 @@ a {
     background: var(--sr-surface);
     border: 1px solid var(--sr-border);
     border-radius: 999px;
-    box-shadow: 0 8px 20px rgba(28, 39, 51, 0.12);
+    box-shadow: var(--sr-shadow-md);
 }
 
 .sr-table-loading .spinner-border {
@@ -811,13 +1221,13 @@ a {
 }
 
 .sr-pagination .page-item.active .page-link {
-    background: var(--sr-primary);
-    border-color: var(--sr-primary);
-    color: #fff;
+    background: var(--sr-primary-solid);
+    border-color: var(--sr-primary-solid);
+    color: var(--sr-on-primary);
 }
 
 .sr-pagination .page-item.disabled .page-link {
-    color: #9aa5b3;
+    color: var(--sr-placeholder);
 }
 
 .sr-pagination .form-select.form-select-sm {
@@ -894,7 +1304,7 @@ a {
 }
 
 .form-switch .form-check-input:focus {
-    box-shadow: 0 0 0 0.2rem rgba(47, 91, 142, 0.16);
+    box-shadow: var(--sr-focus-ring);
 }
 
 .form-check-input:checked {
@@ -904,12 +1314,12 @@ a {
 
 .form-control.is-invalid, .form-select.is-invalid {
     border-color: var(--sr-danger);
-    box-shadow: 0 0 0 0.2rem rgba(179, 56, 46, 0.16);
+    box-shadow: var(--sr-focus-ring-danger);
 }
 
 .form-control.is-valid, .form-select.is-valid {
     border-color: var(--sr-success);
-    box-shadow: 0 0 0 0.2rem rgba(30, 125, 76, 0.16);
+    box-shadow: var(--sr-focus-ring-success);
 }
 
 .modal-content {
@@ -949,7 +1359,7 @@ a {
 .sr-toast {
     border: 1px solid var(--sr-border);
     border-radius: var(--sr-radius);
-    box-shadow: 0 6px 18px rgba(20, 30, 45, 0.12);
+    box-shadow: var(--sr-shadow-sm);
 }
 
 .sr-toast .toast-header {
@@ -963,9 +1373,26 @@ a {
 }
 
 .btn-primary {
-    --bs-btn-hover-bg: var(--sr-primary-strong);
-    --bs-btn-disabled-bg: var(--sr-primary);
-    --bs-btn-active-bg: var(--sr-primary-strong);
+    /* Filled primary actions are driven by the solid tokens so the same rule
+       reads correctly on light and dark surfaces (white text on the darker
+       light-mode blue, white text on the deeper dark-mode blue). */
+    --bs-btn-color: var(--sr-on-primary);
+    --bs-btn-bg: var(--sr-primary-solid);
+    --bs-btn-border-color: var(--sr-primary-solid);
+    --bs-btn-hover-color: var(--sr-on-primary);
+    --bs-btn-hover-bg: var(--sr-primary-solid-hover);
+    --bs-btn-hover-border-color: var(--sr-primary-solid-hover);
+    --bs-btn-active-color: var(--sr-on-primary);
+    --bs-btn-active-bg: var(--sr-primary-solid-active);
+    --bs-btn-active-border-color: var(--sr-primary-solid-active);
+    --bs-btn-disabled-color: var(--sr-on-primary);
+    --bs-btn-disabled-bg: var(--sr-primary-solid);
+    --bs-btn-disabled-border-color: var(--sr-primary-solid);
+    --bs-btn-focus-shadow-rgb: 47, 91, 142;
+}
+
+[data-bs-theme="dark"] .btn-primary {
+    --bs-btn-focus-shadow-rgb: 124, 179, 234;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -978,6 +1405,13 @@ a {
     .action-drop .dropdown-toggle {
         transition: none;
     }
+    /* Theme switching: the palette changes instantly, with no page wash and no
+       crossfade (the wash/transition rules live in a no-preference block, and
+       the switch itself is decorative motion). */
+    .sr-theme-fade { display: none; }
+    .sr-theme-toggle,
+    .sr-theme-toggle .bi,
+    .sr-theme-toggle-thumb { transition: none; }
 }
 
 /* ============================ Responsive refinements ============================ */
@@ -1090,7 +1524,7 @@ html, body {
         width: auto;
         padding: 0.7rem 0.85rem;
         background: var(--sr-surface);
-        box-shadow: 0 1px 2px rgba(20, 30, 45, 0.04);
+        box-shadow: var(--sr-shadow-xs);
         display: flex;
         flex-direction: column;
     }
@@ -1343,7 +1777,7 @@ html, body {
 }
 
 @media (max-width: 991.98px) {
-    /* Mobile navbar: row 1 = "Student Records" brand + burger toggler.
+    /* Mobile navbar: row 1 = "Student Records" brand + theme switch + burger.
        The burger expands a second row below the brand containing
        "Dashboard" on the left and the "Admin" block on the right,
        aligned end to end on one line. */
@@ -1377,6 +1811,34 @@ html, body {
     }
     .sr-user-btn .ms-2 {
         margin-left: 0.15rem !important;
+    }
+
+    /* Theme toggle stays on the brand row. The pill is a touch more compact
+       here, while a transparent hit area keeps the tap target at 44px without
+       changing how the control looks. */
+    .sr-theme-toggle {
+        --sr-toggle-w: 54px;
+        --sr-toggle-h: 28px;
+    }
+    .sr-theme-toggle::after {
+        content: "";
+        position: absolute;
+        inset: -9px -5px;
+    }
+}
+
+/* Very small phones: the brand row must still fit brand + switch + burger on
+   one line, so the wordmark steps down and the pill gets a little narrower. */
+@media (max-width: 400px) {
+    .brand-text {
+        font-size: 0.95rem;
+    }
+    .navbar-brand {
+        margin-right: 0.5rem;
+    }
+    .sr-theme-toggle {
+        --sr-toggle-w: 48px;
+        --sr-toggle-h: 26px;
     }
 }
 

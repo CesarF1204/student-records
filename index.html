@@ -2,10 +2,33 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
+        <meta name="color-scheme" content="light dark" />
+
+        <!-- Theme boot: resolve the saved theme (or the system preference on a
+            first visit) and apply it before the first paint, so the page never
+            flashes the wrong theme. Inline on purpose; js/components/theme.js
+            takes over afterwards to keep the toggle in sync. -->
+        <script>
+            (() => {
+                const STORAGE_KEY = "student-records-theme";
+                let saved = null;
+                try {
+                    saved = window.localStorage.getItem(STORAGE_KEY);
+                } catch {
+                    /* storage blocked (private mode) — fall back to the system */
+                }
+                const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+                const theme = saved === "light" || saved === "dark" ? saved : (prefersDark ? "dark" : "light");
+
+                document.documentElement.setAttribute("data-bs-theme", theme);
+                document.querySelector('meta[name="color-scheme"]').setAttribute("content", theme);
+            })();
+        </script>
+
         <!-- interactive-widget=resizes-content: on Android the layout viewport
-             shrinks while the on-screen keyboard is open, so modals and the
-             page keep the focused field visible above the keyboard. Ignored
-             by iOS Safari. Pinch-zoom for users stays fully enabled. -->
+            shrinks while the on-screen keyboard is open, so modals and the
+            page keep the focused field visible above the keyboard. Ignored
+            by iOS Safari. Pinch-zoom for users stays fully enabled. -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
         <title>Student Records &middot; Dashboard</title>
         <meta name="description" content="Admin dashboard for managing student records." />
@@ -35,10 +58,24 @@
                     <span class="brand-mark" aria-hidden="true"><i class="bi bi-mortarboard-fill"></i></span>
                     <span class="brand-text">Student&nbsp;Records</span>
                 </a>
+
+                <!-- Theme switch on the brand row (always visible, even on mobile):
+                    placed outside the collapsing menu so it is never hidden behind
+                    the hamburger. Active on small screens only; the desktop copy
+                    lives in the right group below. Both are kept in sync by
+                    js/components/theme.js (aria-checked + accessible label). -->
+                <button class="sr-theme-toggle d-lg-none" id="themeToggleMobile" type="button"
+                    role="switch" aria-checked="false" aria-label="Dark mode">
+                    <i class="bi bi-sun sr-theme-icon-light" aria-hidden="true"></i>
+                    <span class="sr-theme-toggle-thumb" aria-hidden="true"></span>
+                    <i class="bi bi-moon-stars sr-theme-icon-dark" aria-hidden="true"></i>
+                </button>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav"
                     aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="collapse navbar-collapse" id="primaryNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
@@ -47,8 +84,23 @@
                             </a>
                         </li>
                     </ul>
+
+                    <!-- Right group (web / ≥lg only): date → theme switch → admin, so
+                        the switch stays between the two. On mobile the date and this
+                        copy drop out (the switch is handled on the brand row above) and
+                        the admin block moves into the collapsed menu. State, label,
+                        persistence and the system-preference fallback are handled by
+                        js/components/theme.js. -->
                     <div class="d-flex align-items-center gap-3">
                         <span class="text-muted d-none d-lg-inline" id="todayLabel" aria-hidden="true"></span>
+
+                        <button class="sr-theme-toggle d-none d-lg-inline-flex" id="themeToggle" type="button" role="switch"
+                            aria-checked="false" aria-label="Dark mode">
+                            <i class="bi bi-sun sr-theme-icon-light" aria-hidden="true"></i>
+                            <span class="sr-theme-toggle-thumb" aria-hidden="true"></span>
+                            <i class="bi bi-moon-stars sr-theme-icon-dark" aria-hidden="true"></i>
+                        </button>
+
                         <div class="dropdown">
                             <button class="btn btn-light btn-sm sr-user-btn d-flex align-items-center" type="button"
                                 data-bs-toggle="dropdown" aria-expanded="false" aria-label="Admin account menu">

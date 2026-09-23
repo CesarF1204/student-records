@@ -4,6 +4,7 @@ import { ADMIN } from "./config/constants.js";
 import { paintAvatarEl } from "./components/avatar.js";
 import { initModals, initTooltips, getExportModal } from "./components/modals.js";
 import { initToast } from "./components/toast.js";
+import { initThemeToggle } from "./components/theme.js";
 import { initStudentTable, renderAll, showTableLoading } from "./features/studentTable.js";
 import { initFindStudent } from "./features/findStudent.js";
 import { initStudentForm, openStudentModal } from "./features/studentForm.js";
@@ -54,6 +55,9 @@ const wireExport = () => {
  * @author Cesar
  */
 const init = () => {
+    /* Theme first: the boot script in index.html already painted the palette. */
+    initThemeToggle();
+
     initModals();
     initToast();
     initTooltips();

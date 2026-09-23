@@ -25,3 +25,15 @@ export const EXPORT_FILENAME = "student-records.csv";
 
 /** Brief delay before a filter/reset change renders, so the loading animation is visible. */
 export const FILTER_RENDER_DELAY_MS = 350;
+
+/**
+ * localStorage key holding the user's explicit theme choice ("light" | "dark").
+ * Keep in sync with the inline theme boot script in index.html.
+ */
+export const THEME_STORAGE_KEY = "student-records-theme";
+
+/** Root attribute Bootstrap 5.3 reads to switch color modes. */
+export const THEME_ATTRIBUTE = "data-bs-theme";
+
+/** Length of the light/dark crossfade — matches the CSS transition duration. */
+export const THEME_TRANSITION_MS = 360;
