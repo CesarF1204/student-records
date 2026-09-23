@@ -1866,12 +1866,17 @@ html, body {
         min-height: 2.5rem;
     }
 
-    /* Inputs inside modals: never zoom, stay comfortably sized */
+    /* Inputs inside modals: prevent mobile auto-zoom. iOS Safari and
+       Android Chrome zoom the viewport when a text control whose computed
+       font-size is below 16px receives focus. Using --sr-input-font-size
+       (1rem / 16px inside this media query — the auto-zoom threshold)
+       keeps the page at its current zoom level while remaining usable.
+       This also aligns modal inputs with page-level .form-control sizing. */
     .modal .form-control,
     .modal .form-select,
     .modal .form-control-sm,
     .modal .form-select-sm {
-        font-size: 0.85rem;
+        font-size: var(--sr-input-font-size);
         min-height: 2.5rem;
     }
 
