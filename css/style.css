@@ -320,7 +320,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6,
-.sr-title, .stat-value, .brand-text {
+.stat-value, .brand-text {
     font-family: var(--sr-font-display);
     color: var(--sr-ink);
 }
@@ -698,10 +698,6 @@ a {
 .sr-breadcrumb .breadcrumb .active {
     color: var(--sr-primary);
     font-weight: 600;
-}
-
-.sr-title {
-    font-weight: 800;
 }
 
 /* ============================ Stat cards ============================ */
@@ -1450,8 +1446,6 @@ html, body {
         padding-left: 0.85rem;
         padding-right: 0.85rem;
     }
-
-    .sr-title { font-size: 1.35rem; }
 
     .sr-stat {
         padding: 0.85rem 0.9rem 0.7rem;
